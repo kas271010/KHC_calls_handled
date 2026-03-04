@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kadence Health Care - Call Center Command Center</title>
+<title>KHC - Calls Handled</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
@@ -750,6 +750,102 @@
   tr:hover .remove-btn { opacity: 1; }
   .remove-btn:hover { color: var(--red); background: rgba(239,68,68,0.1); }
 
+  /* Tally Button */
+  .tally-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    font-size: 22px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+    position: relative;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .tally-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(16,185,129,0.5);
+  }
+
+  .tally-btn:active {
+    transform: scale(0.92);
+    box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+  }
+
+  .tally-btn .btn-ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    animation: ripple 0.6s ease-out forwards;
+    pointer-events: none;
+  }
+
+  @keyframes ripple {
+    0% { width: 0; height: 0; opacity: 1; }
+    100% { width: 120px; height: 120px; opacity: 0; }
+  }
+
+  .tally-btn .plus-one {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    font-weight: 800;
+    color: #34d399;
+    animation: floatUp 0.8s ease-out forwards;
+    pointer-events: none;
+    text-shadow: 0 0 10px rgba(16,185,129,0.6);
+  }
+
+  @keyframes floatUp {
+    0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-40px); }
+  }
+
+  .tally-minus {
+    background: rgba(239,68,68,0.15);
+    color: var(--red);
+    border: 1px solid rgba(239,68,68,0.3);
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .tally-minus:hover {
+    background: rgba(239,68,68,0.3);
+  }
+
+  .tally-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .call-count-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--text);
+    min-width: 40px;
+    text-align: center;
+    line-height: 1;
+  }
+
   /* Responsive */
   @media (max-width: 1200px) {
     .panels { grid-template-columns: 1fr; }
@@ -881,7 +977,7 @@
           <th>Hrs Used</th>
           <th>Avail Hrs</th>
           <th>Target Calls</th>
-          <th>Actual Calls</th>
+          <th>Calls Taken</th>
           <th style="width:180px">Progress</th>
           <th>Status</th>
         </tr>
@@ -966,7 +1062,13 @@ function renderTable() {
       <td><span class="computed" style="color:var(--accent2)">${c.usedHours.toFixed(1)}</span></td>
       <td><span class="computed avail-hours">${c.availHours.toFixed(1)}</span></td>
       <td><span class="computed target-calls">${c.target}</span></td>
-      <td><input class="num-input" type="number" min="0" max="99" value="${agent.actual}" onchange="updateAgent(${agent.id},'actual',+this.value)" style="width:58px;font-size:16px"></td>
+      <td>
+        <div class="tally-group">
+          <button class="tally-minus" onclick="tallyMinus(${agent.id})" title="Undo">−</button>
+          <span class="call-count-display">${agent.actual}</span>
+          <button class="tally-btn" onclick="tallyCall(this,${agent.id})" title="Log a call!">+1</button>
+        </div>
+      </td>
       <td class="progress-cell">
         <div class="progress-bar-wrap">
           <div class="progress-bar-fill" style="width:${Math.min(c.pct,100)}%;background:${getProgressColor(c.pct)}"></div>
@@ -1022,6 +1124,37 @@ function updateAgent(id, field, value) {
 
   renderTable();
   autoSave();
+}
+
+// ── Tally Button ──
+function tallyCall(btnEl, id) {
+  const agent = agents.find(a => a.id === id);
+  if (!agent) return;
+
+  // Ripple effect
+  const ripple = document.createElement('span');
+  ripple.className = 'btn-ripple';
+  ripple.style.left = '50%';
+  ripple.style.top = '50%';
+  ripple.style.marginLeft = '-60px';
+  ripple.style.marginTop = '-60px';
+  btnEl.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+
+  // +1 float animation
+  const plus = document.createElement('span');
+  plus.className = 'plus-one';
+  plus.textContent = '+1';
+  btnEl.appendChild(plus);
+  setTimeout(() => plus.remove(), 800);
+
+  updateAgent(id, 'actual', agent.actual + 1);
+}
+
+function tallyMinus(id) {
+  const agent = agents.find(a => a.id === id);
+  if (!agent || agent.actual <= 0) return;
+  updateAgent(id, 'actual', agent.actual - 1);
 }
 
 // ── Add/Remove Agent ──
@@ -1160,7 +1293,7 @@ function autoSave() {
     fieldTime: document.getElementById('cfg-field').value,
     callMin: document.getElementById('cfg-call').value,
   }};
-  localStorage.setItem('kadence_callcenter', JSON.stringify(data));
+  localStorage.setItem('khc_calls_handled', JSON.stringify(data));
 }
 
 function saveData() {
@@ -1170,7 +1303,7 @@ function saveData() {
 
 function loadData() {
   try {
-    const raw = localStorage.getItem('kadence_callcenter');
+    const raw = localStorage.getItem('khc_calls_handled');
     if (raw) {
       const data = JSON.parse(raw);
       agents = data.agents || [];
