@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kadence Health Care - Call Center Command Center</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  :root {
+    --primary: #0f172a;
+    --accent: #3b82f6;
+    --accent2: #8b5cf6;
+    --gold: #f59e0b;
+    --silver: #94a3b8;
+    --bronze: #d97706;
+    --green: #10b981;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --bg: #0f172a;
+    --card: #1e293b;
+    --card2: #334155;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --border: #334155;
+    --glow-blue: 0 0 30px rgba(59,130,246,0.3);
+    --glow-gold: 0 0 30px rgba(245,158,11,0.4);
+    --glow-green: 0 0 20px rgba(16,185,129,0.3);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 20% 50%, rgba(59,130,246,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(16,185,129,0.05) 0%, transparent 50%);
+    animation: bgShift 20s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  @keyframes bgShift {
+    0%, 100% { transform: translate(0,0) rotate(0deg); }
+    33% { transform: translate(-2%,1%) rotate(1deg); }
+    66% { transform: translate(1%,-1%) rotate(-1deg); }
+  }
+
+  /* Header */
+  .header {
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+  }
+
+  .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: var(--glow-blue);
+    animation: logoPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes logoPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(59,130,246,0.3); }
+    50% { box-shadow: 0 0 40px rgba(59,130,246,0.6); }
+  }
+
+  .logo-text h1 {
+    font-size: 22px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text p {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-weight: 600;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 24px;
+  }
+
+  .header-stat {
+    text-align: center;
+    padding: 8px 20px;
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 12px;
+  }
+
+  .header-stat .val {
+    font-size: 24px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+  }
+
+  .header-stat .lbl {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .clock {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    text-shadow: 0 0 20px rgba(59,130,246,0.5);
+  }
+
+  .clock-date {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  /* Main content */
+  .main {
+    position: relative;
+    z-index: 1;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 24px 40px;
+  }
+
+  /* Config bar */
+  .config-bar {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .config-bar label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .config-bar input {
+    background: var(--primary);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    width: 70px;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+
+  .config-bar input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(59,130,246,0.2);
+  }
+
+  .config-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .config-divider {
+    width: 1px;
+    height: 30px;
+    background: var(--border);
+  }
+
+  /* Agent Grid */
+  .section-title {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  .agent-table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    background: linear-gradient(180deg, #1e293b, #0f172a);
+    padding: 14px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    border-bottom: 2px solid var(--accent);
+    text-align: center;
+    position: sticky;
+    top: 0;
+    white-space: nowrap;
+  }
+
+  thead th:first-child { text-align: left; padding-left: 20px; }
+
+  tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(51,65,85,0.5);
+  }
+
+  tbody tr:hover {
+    background: rgba(59,130,246,0.05);
+  }
+
+  tbody tr.empty-row { opacity: 0.3; }
+  tbody tr.has-data { opacity: 1; }
+
+  td {
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+
+  td:first-child { text-align: left; padding-left: 20px; }
+
+  .agent-name-input {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    width: 160px;
+    transition: all 0.3s;
+  }
+
+  .agent-name-input:focus {
+    background: var(--primary);
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .agent-name-input::placeholder {
+    color: #475569;
+    font-weight: 400;
+  }
+
+  .num-input {
+    background: var(--primary);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 6px;
+    border-radius: 8px;
+    width: 52px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .num-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(59,130,246,0.3);
+    outline: none;
+  }
+
+  .num-input.setup-input:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 12px rgba(139,92,246,0.3);
+  }
+
+  .computed {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .avail-hours { color: var(--accent); }
+  .target-calls { color: var(--green); font-size: 16px; }
+  .actual-calls-val { color: #f1f5f9; }
+
+  .progress-cell {
+    width: 160px;
+  }
+
+  .progress-bar-wrap {
+    background: var(--primary);
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border);
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1), background 0.5s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .progress-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .status-crushing {
+    background: rgba(16,185,129,0.15);
+    color: #34d399;
+    border: 1px solid rgba(16,185,129,0.3);
+    animation: statusGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes statusGlow {
+    0%, 100% { box-shadow: 0 0 5px rgba(16,185,129,0.2); }
+    50% { box-shadow: 0 0 15px rgba(16,185,129,0.4); }
+  }
+
+  .status-ontrack {
+    background: rgba(59,130,246,0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59,130,246,0.3);
+  }
+
+  .status-behind {
+    background: rgba(245,158,11,0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245,158,11,0.3);
+  }
+
+  .status-idle {
+    background: rgba(148,163,184,0.1);
+    color: #64748b;
+    border: 1px solid rgba(148,163,184,0.2);
+  }
+
+  /* Bottom panels */
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+
+  .panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Leaderboard */
+  .lb-entry {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lb-entry::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .lb-entry:hover::before {
+    opacity: 1;
+  }
+
+  .lb-1 {
+    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05));
+    border: 1px solid rgba(245,158,11,0.3);
+  }
+  .lb-1::before { background: linear-gradient(135deg, rgba(245,158,11,0.05), transparent); }
+
+  .lb-2 {
+    background: linear-gradient(135deg, rgba(148,163,184,0.12), rgba(148,163,184,0.04));
+    border: 1px solid rgba(148,163,184,0.25);
+  }
+
+  .lb-3 {
+    background: linear-gradient(135deg, rgba(217,119,6,0.12), rgba(217,119,6,0.04));
+    border: 1px solid rgba(217,119,6,0.25);
+  }
+
+  .lb-rest {
+    background: rgba(30,41,59,0.5);
+    border: 1px solid transparent;
+  }
+
+  .lb-rank {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+
+  .rank-1 { background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; box-shadow: var(--glow-gold); }
+  .rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); color: #0f172a; }
+  .rank-3 { background: linear-gradient(135deg, #d97706, #92400e); color: #fff; }
+  .rank-other { background: var(--card2); color: var(--muted); }
+
+  .lb-name {
+    flex: 1;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .lb-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 18px;
+  }
+
+  .lb-score-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Achievements */
+  .achievements-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .achievement {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(30,41,59,0.5);
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .achievement.unlocked {
+    border-color: rgba(245,158,11,0.4);
+    background: rgba(245,158,11,0.08);
+  }
+
+  .achievement.unlocked .ach-icon {
+    filter: none;
+    transform: scale(1.1);
+  }
+
+  .ach-icon {
+    font-size: 28px;
+    filter: grayscale(1) brightness(0.4);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .ach-info h4 {
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .ach-info p {
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* Sparkline mini chart area */
+  .team-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .stat-card.blue::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .stat-card.green::before { background: linear-gradient(90deg, var(--green), #059669); }
+  .stat-card.gold::before { background: linear-gradient(90deg, var(--gold), #d97706); }
+  .stat-card.pink::before { background: linear-gradient(90deg, var(--pink), #db2777); }
+
+  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+
+  .stat-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-card.blue .stat-val { color: var(--accent); }
+  .stat-card.green .stat-val { color: var(--green); }
+  .stat-card.gold .stat-val { color: var(--gold); }
+  .stat-card.pink .stat-val { color: var(--pink); }
+
+  .stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .btn-add {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+  }
+
+  .btn-add:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(59,130,246,0.5);
+  }
+
+  .btn-reset {
+    background: rgba(239,68,68,0.15);
+    color: var(--red);
+    border: 1px solid rgba(239,68,68,0.3);
+  }
+
+  .btn-reset:hover {
+    background: rgba(239,68,68,0.25);
+  }
+
+  .btn-save {
+    background: linear-gradient(135deg, var(--green), #059669);
+    color: white;
+    box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+  }
+
+  .btn-save:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(16,185,129,0.5);
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  /* Confetti */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    z-index: 999;
+    animation: confettiFall 3s ease-in forwards;
+    pointer-events: none;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--card);
+    border: 1px solid var(--green);
+    color: var(--text);
+    padding: 16px 24px;
+    border-radius: 14px;
+    font-weight: 600;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+    z-index: 100;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* Remove agent btn */
+  .remove-btn {
+    background: none;
+    border: none;
+    color: #475569;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    opacity: 0;
+  }
+
+  tr:hover .remove-btn { opacity: 1; }
+  .remove-btn:hover { color: var(--red); background: rgba(239,68,68,0.1); }
+
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .panels { grid-template-columns: 1fr; }
+    .team-stats { grid-template-columns: repeat(2, 1fr); }
+    .header { flex-direction: column; gap: 16px; }
+  }
+
+  /* Print style */
+  @media print {
+    body { background: white; color: black; }
+    .config-bar, .btn-group, .remove-btn { display: none; }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .trophy-spin {
+    display: inline-block;
+    animation: trophySpin 1s ease-out;
+  }
+
+  @keyframes trophySpin {
+    0% { transform: rotateY(0deg) scale(0.5); }
+    50% { transform: rotateY(180deg) scale(1.3); }
+    100% { transform: rotateY(360deg) scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo-section">
+    <div class="logo-icon">💨</div>
+    <div class="logo-text">
+      <h1>Kadence Health Care</h1>
+      <p>CPAP Support &bull; Call Center Command</p>
+    </div>
+  </div>
+  <div class="header-stats">
+    <div class="header-stat">
+      <div class="val" id="hdr-active">0</div>
+      <div class="lbl">Agents Active</div>
+    </div>
+    <div class="header-stat">
+      <div class="val" id="hdr-calls">0</div>
+      <div class="lbl">Total Calls</div>
+    </div>
+    <div class="header-stat">
+      <div class="val" id="hdr-pct">0%</div>
+      <div class="lbl">Team Goal %</div>
+    </div>
+  </div>
+  <div>
+    <div class="clock" id="clock">00:00:00</div>
+    <div class="clock-date" id="clock-date"></div>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Config Bar -->
+  <div class="config-bar">
+    <div class="config-group">
+      <label>Work Day</label>
+      <input type="number" id="cfg-hours" value="7" min="1" max="12" step="0.5"> <span style="color:var(--muted);font-size:12px">hrs</span>
+    </div>
+    <div class="config-divider"></div>
+    <div class="config-group">
+      <label>Office Setup</label>
+      <input type="number" id="cfg-office" value="1" min="0.5" max="4" step="0.5"> <span style="color:var(--muted);font-size:12px">hr each</span>
+    </div>
+    <div class="config-divider"></div>
+    <div class="config-group">
+      <label>Field Visit</label>
+      <input type="number" id="cfg-field" value="2" min="0.5" max="6" step="0.5"> <span style="color:var(--muted);font-size:12px">hrs each</span>
+    </div>
+    <div class="config-divider"></div>
+    <div class="config-group">
+      <label>Call Duration</label>
+      <input type="number" id="cfg-call" value="20" min="5" max="60" step="5"> <span style="color:var(--muted);font-size:12px">min</span>
+    </div>
+  </div>
+
+  <!-- Team Stats Cards -->
+  <div class="team-stats">
+    <div class="stat-card blue">
+      <div class="stat-val" id="stat-target">0</div>
+      <div class="stat-label">Team Target</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-val" id="stat-actual">0</div>
+      <div class="stat-label">Calls Completed</div>
+    </div>
+    <div class="stat-card gold">
+      <div class="stat-val" id="stat-mvp">--</div>
+      <div class="stat-label">Today's MVP</div>
+    </div>
+    <div class="stat-card pink">
+      <div class="stat-val" id="stat-efficiency">0%</div>
+      <div class="stat-label">Avg Efficiency</div>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="btn-group">
+    <button class="btn btn-add" onclick="addAgent()">+ Add Agent</button>
+    <button class="btn btn-save" onclick="saveData()">💾 Save</button>
+    <button class="btn btn-reset" onclick="resetDay()">↻ Reset Day</button>
+  </div>
+
+  <!-- Agent Table -->
+  <div class="section-title">Agent Performance Tracker</div>
+  <div class="agent-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:40px"></th>
+          <th style="text-align:left">Agent Name</th>
+          <th>Office Setups</th>
+          <th>Field Visits</th>
+          <th>Hrs Used</th>
+          <th>Avail Hrs</th>
+          <th>Target Calls</th>
+          <th>Actual Calls</th>
+          <th style="width:180px">Progress</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="agent-body">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Bottom Panels -->
+  <div class="panels">
+    <!-- Leaderboard -->
+    <div class="panel">
+      <div class="panel-title">🏆 Live Leaderboard</div>
+      <div id="leaderboard"></div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="panel">
+      <div class="panel-title">🎖️ Today's Achievements</div>
+      <div class="achievements-grid" id="achievements"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ──
+let agents = [];
+let nextId = 1;
+
+const ACHIEVEMENTS = [
+  { id: 'first10',     icon: '📞', name: 'Call Warrior',      desc: 'Handle 10+ calls',           check: a => a.actual >= 10 },
+  { id: 'twenty',      icon: '🔥', name: 'On Fire',           desc: '20+ calls in a day',          check: a => a.actual >= 20 },
+  { id: 'thirty',      icon: '💎', name: 'Diamond Hands',     desc: '30+ calls - unstoppable!',    check: a => a.actual >= 30 },
+  { id: 'overachiever',icon: '🚀', name: 'Overachiever',      desc: 'Beat target by 20%+',         check: a => a.target > 0 && a.actual >= a.target * 1.2 },
+  { id: 'perfect',     icon: '🎯', name: 'Bullseye',          desc: 'Hit target exactly',          check: a => a.target > 0 && a.actual === a.target },
+  { id: 'fieldking',   icon: '🏥', name: 'Field King',        desc: '3+ field visits & still calling', check: a => a.field >= 3 && a.actual > 0 },
+  { id: 'multitask',   icon: '⚡', name: 'Multitasker',       desc: 'Setups + visits + 5 calls',   check: a => a.office > 0 && a.field > 0 && a.actual >= 5 },
+  { id: 'cpaphero',    icon: '😴', name: 'CPAP Hero',         desc: '100%+ efficiency',            check: a => a.target > 0 && (a.actual / a.target) >= 1.0 },
+];
+
+// ── Config ──
+function getCfg() {
+  return {
+    workDay:     parseFloat(document.getElementById('cfg-hours').value) || 7,
+    officeTime:  parseFloat(document.getElementById('cfg-office').value) || 1,
+    fieldTime:   parseFloat(document.getElementById('cfg-field').value) || 2,
+    callMin:     parseFloat(document.getElementById('cfg-call').value) || 20,
+  };
+}
+
+// ── Compute ──
+function compute(agent) {
+  const cfg = getCfg();
+  const usedHours = (agent.office * cfg.officeTime) + (agent.field * cfg.fieldTime);
+  const availHours = Math.max(0, cfg.workDay - usedHours);
+  const callsPerHour = 60 / cfg.callMin;
+  const target = Math.floor(availHours * callsPerHour);
+  const pct = target > 0 ? Math.round((agent.actual / target) * 100) : 0;
+  return { usedHours, availHours, target, pct, callsPerHour };
+}
+
+// ── Render Table ──
+function renderTable() {
+  const tbody = document.getElementById('agent-body');
+  tbody.innerHTML = '';
+
+  agents.forEach((agent, idx) => {
+    const c = compute(agent);
+    agent.target = c.target; // store for leaderboard
+
+    const tr = document.createElement('tr');
+    tr.className = 'fade-in has-data';
+    tr.innerHTML = `
+      <td><button class="remove-btn" onclick="removeAgent(${agent.id})" title="Remove">✕</button></td>
+      <td><input class="agent-name-input" value="${agent.name}" placeholder="Enter name..." onchange="updateAgent(${agent.id},'name',this.value)"></td>
+      <td><input class="num-input setup-input" type="number" min="0" max="10" value="${agent.office}" onchange="updateAgent(${agent.id},'office',+this.value)"></td>
+      <td><input class="num-input setup-input" type="number" min="0" max="10" value="${agent.field}" onchange="updateAgent(${agent.id},'field',+this.value)"></td>
+      <td><span class="computed" style="color:var(--accent2)">${c.usedHours.toFixed(1)}</span></td>
+      <td><span class="computed avail-hours">${c.availHours.toFixed(1)}</span></td>
+      <td><span class="computed target-calls">${c.target}</span></td>
+      <td><input class="num-input" type="number" min="0" max="99" value="${agent.actual}" onchange="updateAgent(${agent.id},'actual',+this.value)" style="width:58px;font-size:16px"></td>
+      <td class="progress-cell">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" style="width:${Math.min(c.pct,100)}%;background:${getProgressColor(c.pct)}"></div>
+        </div>
+        <div class="progress-pct" style="color:${getProgressColor(c.pct)}">${c.pct}%</div>
+      </td>
+      <td>${getStatusBadge(c.pct)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  updateStats();
+  renderLeaderboard();
+  renderAchievements();
+}
+
+function getProgressColor(pct) {
+  if (pct >= 100) return '#10b981';
+  if (pct >= 70)  return '#3b82f6';
+  if (pct >= 40)  return '#f59e0b';
+  return '#ef4444';
+}
+
+function getStatusBadge(pct) {
+  if (pct >= 100) return '<span class="status-badge status-crushing">🏆 Crushing</span>';
+  if (pct >= 70)  return '<span class="status-badge status-ontrack">✓ On Track</span>';
+  if (pct >= 1)   return '<span class="status-badge status-behind">⚠ Behind</span>';
+  return '<span class="status-badge status-idle">— Idle</span>';
+}
+
+// ── Update Agent ──
+function updateAgent(id, field, value) {
+  const agent = agents.find(a => a.id === id);
+  if (!agent) return;
+
+  const oldActual = agent.actual;
+  agent[field] = value;
+
+  // Check for achievement unlock
+  if (field === 'actual' && value > oldActual) {
+    const c = compute(agent);
+    agent.target = c.target;
+    ACHIEVEMENTS.forEach(ach => {
+      const key = `${agent.id}_${ach.id}`;
+      if (ach.check(agent) && !agent._unlocked?.[ach.id]) {
+        if (!agent._unlocked) agent._unlocked = {};
+        agent._unlocked[ach.id] = true;
+        showToast(`${ach.icon} ${agent.name} unlocked "${ach.name}"!`);
+        fireConfetti();
+      }
+    });
+  }
+
+  renderTable();
+  autoSave();
+}
+
+// ── Add/Remove Agent ──
+function addAgent() {
+  agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, _unlocked: {} });
+  renderTable();
+  // Focus the new name input
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.agent-name-input');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }, 100);
+}
+
+function removeAgent(id) {
+  agents = agents.filter(a => a.id !== id);
+  renderTable();
+  autoSave();
+}
+
+// ── Stats ──
+function updateStats() {
+  const active = agents.filter(a => a.name.trim()).length;
+  const totalActual = agents.reduce((s, a) => s + a.actual, 0);
+  const totalTarget = agents.reduce((s, a) => s + (compute(a).target), 0);
+  const teamPct = totalTarget > 0 ? Math.round((totalActual / totalTarget) * 100) : 0;
+
+  document.getElementById('hdr-active').textContent = active;
+  document.getElementById('hdr-calls').textContent = totalActual;
+  document.getElementById('hdr-pct').textContent = teamPct + '%';
+
+  document.getElementById('stat-target').textContent = totalTarget;
+  document.getElementById('stat-actual').textContent = totalActual;
+  document.getElementById('stat-efficiency').textContent = teamPct + '%';
+
+  // MVP
+  let mvp = null;
+  let bestPct = 0;
+  agents.forEach(a => {
+    if (a.name.trim() && a.actual > 0) {
+      const c = compute(a);
+      const p = c.target > 0 ? a.actual / c.target : 0;
+      if (p > bestPct) { bestPct = p; mvp = a; }
+    }
+  });
+  document.getElementById('stat-mvp').textContent = mvp ? mvp.name.split(' ')[0] : '--';
+}
+
+// ── Leaderboard ──
+function renderLeaderboard() {
+  const lb = document.getElementById('leaderboard');
+  const ranked = agents
+    .filter(a => a.name.trim())
+    .map(a => {
+      const c = compute(a);
+      const score = a.actual + (c.pct >= 100 ? 5 : 0); // bonus for hitting target
+      return { ...a, ...c, score };
+    })
+    .sort((a, b) => b.score - a.score || b.pct - a.pct);
+
+  if (!ranked.length) {
+    lb.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px">Add agents to see rankings</div>';
+    return;
+  }
+
+  lb.innerHTML = ranked.slice(0, 8).map((a, i) => {
+    const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
+    const entryClass = i === 0 ? 'lb-1' : i === 1 ? 'lb-2' : i === 2 ? 'lb-3' : 'lb-rest';
+    const medal = i === 0 ? '👑' : '';
+    return `
+      <div class="lb-entry ${entryClass}">
+        <div class="lb-rank ${rankClass}">${i + 1}</div>
+        <div class="lb-name">${medal} ${a.name}</div>
+        <div style="text-align:right">
+          <div class="lb-score" style="color:${getProgressColor(a.pct)}">${a.actual}<span style="font-size:12px;color:var(--muted)">/${a.target}</span></div>
+          <div class="lb-score-label">${a.pct}% efficiency</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── Achievements ──
+function renderAchievements() {
+  const achDiv = document.getElementById('achievements');
+  const allUnlocked = new Set();
+
+  agents.forEach(a => {
+    if (a._unlocked) Object.keys(a._unlocked).forEach(k => allUnlocked.add(k));
+  });
+
+  achDiv.innerHTML = ACHIEVEMENTS.map(ach => {
+    const unlocked = allUnlocked.has(ach.id);
+    return `
+      <div class="achievement ${unlocked ? 'unlocked' : ''}">
+        <div class="ach-icon">${ach.icon}</div>
+        <div class="ach-info">
+          <h4>${ach.name}</h4>
+          <p>${ach.desc}</p>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── Confetti ──
+function fireConfetti() {
+  const colors = ['#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#ef4444'];
+  for (let i = 0; i < 40; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    el.style.width = (Math.random() * 8 + 5) + 'px';
+    el.style.height = (Math.random() * 8 + 5) + 'px';
+    el.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    el.style.animationDelay = (Math.random() * 0.5) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+}
+
+// ── Toast ──
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ── Save/Load ──
+function autoSave() {
+  const data = { agents, nextId, config: {
+    workDay: document.getElementById('cfg-hours').value,
+    officeTime: document.getElementById('cfg-office').value,
+    fieldTime: document.getElementById('cfg-field').value,
+    callMin: document.getElementById('cfg-call').value,
+  }};
+  localStorage.setItem('kadence_callcenter', JSON.stringify(data));
+}
+
+function saveData() {
+  autoSave();
+  showToast('💾 Data saved successfully!');
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem('kadence_callcenter');
+    if (raw) {
+      const data = JSON.parse(raw);
+      agents = data.agents || [];
+      nextId = data.nextId || 1;
+      if (data.config) {
+        document.getElementById('cfg-hours').value = data.config.workDay;
+        document.getElementById('cfg-office').value = data.config.officeTime;
+        document.getElementById('cfg-field').value = data.config.fieldTime;
+        document.getElementById('cfg-call').value = data.config.callMin;
+      }
+    }
+  } catch(e) {}
+}
+
+function resetDay() {
+  if (!confirm('Reset all call counts for today? Agent names and settings are kept.')) return;
+  agents.forEach(a => { a.actual = 0; a.office = 0; a.field = 0; a._unlocked = {}; });
+  renderTable();
+  autoSave();
+  showToast('↻ Day reset — fresh start!');
+}
+
+// ── Clock ──
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour12: true });
+  document.getElementById('clock-date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+// ── Config listeners ──
+['cfg-hours','cfg-office','cfg-field','cfg-call'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => { renderTable(); autoSave(); });
+});
+
+// ── Init ──
+loadData();
+if (agents.length === 0) {
+  // Start with 5 empty slots
+  for (let i = 0; i < 5; i++) addAgent();
+}
+renderTable();
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+</body>
+</html>
