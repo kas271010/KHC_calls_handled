@@ -1006,10 +1006,40 @@
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 <script>
+// ── Firebase Init ──
+const firebaseConfig = {
+  apiKey: "AIzaSyCIPsuFVME8Wkkf07fcHcytU4ti0-KwNrs",
+  authDomain: "khc-calls-handled.firebaseapp.com",
+  databaseURL: "https://khc-calls-handled-default-rtdb.firebaseio.com",
+  projectId: "khc-calls-handled",
+  storageBucket: "khc-calls-handled.firebasestorage.app",
+  messagingSenderId: "75306273108",
+  appId: "1:75306273108:web:588630325e451f0235a0c1"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Use today's date as the key so data resets daily
+function getTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+const todayRef = db.ref('days/' + getTodayKey());
+const agentsRef = todayRef.child('agents');
+const configRef = todayRef.child('config');
+const counterRef = todayRef.child('nextId');
+
 // ── State ──
 let agents = [];
 let nextId = 1;
+let suppressSync = false; // prevent echo loops
 
 const ACHIEVEMENTS = [
   { id: 'first10',     icon: '📞', name: 'Call Warrior',      desc: 'Handle 10+ calls',           check: a => a.actual >= 10 },
@@ -1043,6 +1073,66 @@ function compute(agent) {
   return { usedHours, availHours, target, pct, callsPerHour };
 }
 
+// ── Firebase Sync (write) ──
+function syncToFirebase() {
+  if (suppressSync) return;
+  const cleanAgents = agents.map(a => ({
+    id: a.id, name: a.name, office: a.office, field: a.field,
+    actual: a.actual, target: a.target || 0,
+    _unlocked: a._unlocked || {}
+  }));
+  agentsRef.set(cleanAgents);
+  counterRef.set(nextId);
+}
+
+function syncConfigToFirebase() {
+  configRef.set({
+    workDay: document.getElementById('cfg-hours').value,
+    officeTime: document.getElementById('cfg-office').value,
+    fieldTime: document.getElementById('cfg-field').value,
+    callMin: document.getElementById('cfg-call').value,
+  });
+}
+
+// ── Firebase Sync (listen for changes from others) ──
+agentsRef.on('value', snap => {
+  const data = snap.val();
+  if (!data) return;
+  suppressSync = true;
+  agents = data.map(a => ({
+    id: a.id, name: a.name || '', office: a.office || 0, field: a.field || 0,
+    actual: a.actual || 0, target: a.target || 0,
+    _unlocked: a._unlocked || {}
+  }));
+  renderTable();
+  suppressSync = false;
+});
+
+counterRef.on('value', snap => {
+  const val = snap.val();
+  if (val && val > nextId) nextId = val;
+});
+
+configRef.on('value', snap => {
+  const cfg = snap.val();
+  if (!cfg) return;
+  suppressSync = true;
+  document.getElementById('cfg-hours').value = cfg.workDay;
+  document.getElementById('cfg-office').value = cfg.officeTime;
+  document.getElementById('cfg-field').value = cfg.fieldTime;
+  document.getElementById('cfg-call').value = cfg.callMin;
+  renderTable();
+  suppressSync = false;
+});
+
+// ── Connection status ──
+const connRef = db.ref('.info/connected');
+connRef.on('value', snap => {
+  const dot = snap.val() ? '🟢' : '🔴';
+  document.getElementById('hdr-pct').parentElement.querySelector('.lbl').textContent =
+    snap.val() ? 'Team Goal % ' + dot : 'OFFLINE ' + dot;
+});
+
 // ── Render Table ──
 function renderTable() {
   const tbody = document.getElementById('agent-body');
@@ -1050,7 +1140,7 @@ function renderTable() {
 
   agents.forEach((agent, idx) => {
     const c = compute(agent);
-    agent.target = c.target; // store for leaderboard
+    agent.target = c.target;
 
     const tr = document.createElement('tr');
     tr.className = 'fade-in has-data';
@@ -1112,7 +1202,6 @@ function updateAgent(id, field, value) {
     const c = compute(agent);
     agent.target = c.target;
     ACHIEVEMENTS.forEach(ach => {
-      const key = `${agent.id}_${ach.id}`;
       if (ach.check(agent) && !agent._unlocked?.[ach.id]) {
         if (!agent._unlocked) agent._unlocked = {};
         agent._unlocked[ach.id] = true;
@@ -1123,7 +1212,7 @@ function updateAgent(id, field, value) {
   }
 
   renderTable();
-  autoSave();
+  syncToFirebase();
 }
 
 // ── Tally Button ──
@@ -1161,7 +1250,7 @@ function tallyMinus(id) {
 function addAgent() {
   agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, _unlocked: {} });
   renderTable();
-  // Focus the new name input
+  syncToFirebase();
   setTimeout(() => {
     const inputs = document.querySelectorAll('.agent-name-input');
     if (inputs.length) inputs[inputs.length - 1].focus();
@@ -1171,7 +1260,7 @@ function addAgent() {
 function removeAgent(id) {
   agents = agents.filter(a => a.id !== id);
   renderTable();
-  autoSave();
+  syncToFirebase();
 }
 
 // ── Stats ──
@@ -1189,7 +1278,6 @@ function updateStats() {
   document.getElementById('stat-actual').textContent = totalActual;
   document.getElementById('stat-efficiency').textContent = teamPct + '%';
 
-  // MVP
   let mvp = null;
   let bestPct = 0;
   agents.forEach(a => {
@@ -1209,7 +1297,7 @@ function renderLeaderboard() {
     .filter(a => a.name.trim())
     .map(a => {
       const c = compute(a);
-      const score = a.actual + (c.pct >= 100 ? 5 : 0); // bonus for hitting target
+      const score = a.actual + (c.pct >= 100 ? 5 : 0);
       return { ...a, ...c, score };
     })
     .sort((a, b) => b.score - a.score || b.pct - a.pct);
@@ -1240,7 +1328,6 @@ function renderLeaderboard() {
 function renderAchievements() {
   const achDiv = document.getElementById('achievements');
   const allUnlocked = new Set();
-
   agents.forEach(a => {
     if (a._unlocked) Object.keys(a._unlocked).forEach(k => allUnlocked.add(k));
   });
@@ -1285,44 +1372,19 @@ function showToast(msg) {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// ── Save/Load ──
-function autoSave() {
-  const data = { agents, nextId, config: {
-    workDay: document.getElementById('cfg-hours').value,
-    officeTime: document.getElementById('cfg-office').value,
-    fieldTime: document.getElementById('cfg-field').value,
-    callMin: document.getElementById('cfg-call').value,
-  }};
-  localStorage.setItem('khc_calls_handled', JSON.stringify(data));
-}
-
+// ── Save (manual) ──
 function saveData() {
-  autoSave();
-  showToast('💾 Data saved successfully!');
+  syncToFirebase();
+  syncConfigToFirebase();
+  showToast('💾 Synced to cloud — all screens updated!');
 }
 
-function loadData() {
-  try {
-    const raw = localStorage.getItem('khc_calls_handled');
-    if (raw) {
-      const data = JSON.parse(raw);
-      agents = data.agents || [];
-      nextId = data.nextId || 1;
-      if (data.config) {
-        document.getElementById('cfg-hours').value = data.config.workDay;
-        document.getElementById('cfg-office').value = data.config.officeTime;
-        document.getElementById('cfg-field').value = data.config.fieldTime;
-        document.getElementById('cfg-call').value = data.config.callMin;
-      }
-    }
-  } catch(e) {}
-}
-
+// ── Reset Day ──
 function resetDay() {
-  if (!confirm('Reset all call counts for today? Agent names and settings are kept.')) return;
+  if (!confirm('Reset all call counts for today? Agent names are kept.')) return;
   agents.forEach(a => { a.actual = 0; a.office = 0; a.field = 0; a._unlocked = {}; });
   renderTable();
-  autoSave();
+  syncToFirebase();
   showToast('↻ Day reset — fresh start!');
 }
 
@@ -1335,15 +1397,23 @@ function updateClock() {
 
 // ── Config listeners ──
 ['cfg-hours','cfg-office','cfg-field','cfg-call'].forEach(id => {
-  document.getElementById(id).addEventListener('change', () => { renderTable(); autoSave(); });
+  document.getElementById(id).addEventListener('change', () => {
+    renderTable();
+    syncToFirebase();
+    syncConfigToFirebase();
+  });
 });
 
 // ── Init ──
-loadData();
-if (agents.length === 0) {
-  // Start with 5 empty slots
-  for (let i = 0; i < 5; i++) addAgent();
-}
+// Firebase listeners above will populate data when connected.
+// If no data exists yet, seed with 5 empty agents after a short delay.
+setTimeout(() => {
+  if (agents.length === 0) {
+    for (let i = 0; i < 5; i++) addAgent();
+    syncConfigToFirebase();
+  }
+}, 2000);
+
 renderTable();
 updateClock();
 setInterval(updateClock, 1000);
