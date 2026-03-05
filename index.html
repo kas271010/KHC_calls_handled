@@ -902,7 +902,7 @@
     </div>
     <div class="header-stat">
       <div class="val" id="hdr-pct">0%</div>
-      <div class="lbl">Team Goal %</div>
+      <div class="lbl">Calls Covered %</div>
     </div>
   </div>
   <div>
@@ -948,12 +948,14 @@
       <div class="stat-label">Calls Completed</div>
     </div>
     <div class="stat-card gold">
-      <div class="stat-val" id="stat-mvp">--</div>
-      <div class="stat-label">Today's MVP</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px">
+        <input type="number" id="stat-incoming" min="0" value="0" onchange="updateIncoming(+this.value)" style="background:transparent;border:1px solid rgba(245,158,11,0.3);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:800;width:100px;text-align:center;border-radius:10px;padding:2px">
+      </div>
+      <div class="stat-label">Total Calls Received</div>
     </div>
     <div class="stat-card pink">
-      <div class="stat-val" id="stat-efficiency">0%</div>
-      <div class="stat-label">Avg Efficiency</div>
+      <div class="stat-val" id="stat-avg">0</div>
+      <div class="stat-label">Avg Calls / Agent</div>
     </div>
   </div>
 
@@ -1036,9 +1038,12 @@ const agentsRef = todayRef.child('agents');
 const configRef = todayRef.child('config');
 const counterRef = todayRef.child('nextId');
 
+const incomingRef = todayRef.child('incomingCalls');
+
 // ── State ──
 let agents = [];
 let nextId = 1;
+let incomingCalls = 0;
 let suppressSync = false; // prevent echo loops
 
 const ACHIEVEMENTS = [
@@ -1125,13 +1130,35 @@ configRef.on('value', snap => {
   suppressSync = false;
 });
 
+incomingRef.on('value', snap => {
+  const val = snap.val();
+  if (val !== null) {
+    incomingCalls = val;
+    document.getElementById('stat-incoming').value = val;
+    updateHeaderCoverage();
+  }
+});
+
 // ── Connection status ──
 const connRef = db.ref('.info/connected');
 connRef.on('value', snap => {
   const dot = snap.val() ? '🟢' : '🔴';
   document.getElementById('hdr-pct').parentElement.querySelector('.lbl').textContent =
-    snap.val() ? 'Team Goal % ' + dot : 'OFFLINE ' + dot;
+    snap.val() ? 'Calls Covered % ' + dot : 'OFFLINE ' + dot;
 });
+
+// ── Incoming Calls ──
+function updateIncoming(val) {
+  incomingCalls = val || 0;
+  incomingRef.set(incomingCalls);
+  updateHeaderCoverage();
+}
+
+function updateHeaderCoverage() {
+  const totalActual = agents.reduce((s, a) => s + a.actual, 0);
+  const coverage = incomingCalls > 0 ? Math.round((totalActual / incomingCalls) * 100) : 0;
+  document.getElementById('hdr-pct').textContent = coverage + '%';
+}
 
 // ── Render Table ──
 function renderTable() {
@@ -1276,22 +1303,14 @@ function updateStats() {
 
   document.getElementById('hdr-active').textContent = active;
   document.getElementById('hdr-calls').textContent = totalActual;
-  document.getElementById('hdr-pct').textContent = teamPct + '%';
+  const coverage = incomingCalls > 0 ? Math.round((totalActual / incomingCalls) * 100) : 0;
+  document.getElementById('hdr-pct').textContent = coverage + '%';
 
   document.getElementById('stat-target').textContent = totalTarget;
   document.getElementById('stat-actual').textContent = totalActual;
-  document.getElementById('stat-efficiency').textContent = teamPct + '%';
 
-  let mvp = null;
-  let bestPct = 0;
-  agents.forEach(a => {
-    if (a.name.trim() && a.actual > 0) {
-      const c = compute(a);
-      const p = c.target > 0 ? a.actual / c.target : 0;
-      if (p > bestPct) { bestPct = p; mvp = a; }
-    }
-  });
-  document.getElementById('stat-mvp').textContent = mvp ? mvp.name.split(' ')[0] : '--';
+  const avgPerAgent = active > 0 ? Math.round(totalActual / active * 10) / 10 : 0;
+  document.getElementById('stat-avg').textContent = avgPerAgent;
 }
 
 // ── Leaderboard ──
