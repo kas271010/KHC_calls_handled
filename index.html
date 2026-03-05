@@ -892,7 +892,6 @@
     padding: 12px 8px;
     cursor: pointer;
     color: var(--muted);
-    font-size: 18px;
     z-index: 50;
     transition: all 0.3s;
     writing-mode: vertical-rl;
@@ -1035,12 +1034,58 @@
     color: var(--red);
   }
 
-  .add-link-form {
-    padding: 16px;
-    border-top: 1px solid var(--border);
+  /* Tab Bar */
+  .sp-tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--primary);
+    flex-shrink: 0;
   }
+  .sp-tab {
+    flex: 1;
+    padding: 12px 6px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .sp-tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .sp-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .sp-tab-content { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+  .sp-tab-content.active { display: flex; }
+  .sp-tab-body { flex: 1; overflow-y: auto; padding: 12px; }
+  .sp-tab-footer { padding: 12px; border-top: 1px solid var(--border); }
 
-  .add-link-form input {
+  /* Shared card style */
+  .sp-card {
+    background: rgba(30,41,59,0.5);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sp-card:hover { border-color: rgba(59,130,246,0.2); background: rgba(59,130,246,0.05); }
+  .sp-card-title { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+  .sp-card-sub { font-size: 11px; color: var(--muted); }
+  .sp-card-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; margin-top: 6px; }
+  .sp-card:hover .sp-card-actions { opacity: 1; }
+  .sp-card-actions button {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-size: 12px; padding: 2px 6px; border-radius: 4px; transition: all 0.2s;
+  }
+  .sp-card-actions button:hover { color: var(--text); background: rgba(255,255,255,0.1); }
+  .sp-card-actions button.sp-del:hover { color: var(--red); }
+
+  /* Search/filter bar inside tabs */
+  .sp-search {
     width: 100%;
     background: var(--primary);
     border: 1px solid var(--border);
@@ -1052,17 +1097,21 @@
     margin-bottom: 8px;
     transition: border-color 0.3s;
   }
-
-  .add-link-form input:focus {
-    outline: none;
-    border-color: var(--accent);
+  .sp-search:focus { outline: none; border-color: var(--accent); }
+  .sp-search::placeholder { color: #475569; }
+  .sp-select {
+    width: 100%;
+    background: var(--primary);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    margin-bottom: 8px;
   }
-
-  .add-link-form input::placeholder {
-    color: #475569;
-  }
-
-  .btn-add-link {
+  .sp-select:focus { outline: none; border-color: var(--accent); }
+  .sp-btn {
     width: 100%;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
     color: white;
@@ -1076,11 +1125,132 @@
     text-transform: uppercase;
     letter-spacing: 1px;
   }
-
-  .btn-add-link:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+  .sp-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+  .sp-btn-sm {
+    padding: 6px 12px;
+    font-size: 11px;
+    width: auto;
+    display: inline-block;
+    margin-top: 6px;
   }
+
+  /* Guide expand */
+  .sp-guide-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    font-size: 12px;
+    color: var(--muted);
+    white-space: pre-wrap;
+    line-height: 1.5;
+  }
+  .sp-card.expanded .sp-guide-content { max-height: 600px; overflow-y: auto; }
+
+  /* Guide step builder */
+  .sp-step { display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(30,41,59,0.4); border-radius: 8px; margin-bottom: 6px; }
+  .sp-step-num { min-width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 4px; }
+  .sp-step-body { flex: 1; min-width: 0; }
+  .sp-step-img { width: 60px; height: 45px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); }
+  .sp-step-img-view { width: 80px; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); margin-top: 4px; }
+  .sp-step-controls { display: flex; flex-direction: column; gap: 2px; }
+  .sp-step-controls button { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 1px 4px; border-radius: 4px; }
+  .sp-step-controls button:hover { color: var(--text); background: rgba(255,255,255,0.1); }
+  .sp-pdf-attach { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(59,130,246,0.08); border: 1px dashed rgba(59,130,246,0.3); border-radius: 8px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+  .sp-pdf-attach a { color: var(--accent); text-decoration: none; }
+  .sp-pdf-attach a:hover { text-decoration: underline; }
+  .sp-file-btn { display: inline-block; padding: 4px 10px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; background: rgba(59,130,246,0.15); color: var(--accent); border: 1px solid rgba(59,130,246,0.3); transition: all 0.2s; }
+  .sp-file-btn:hover { background: rgba(59,130,246,0.25); }
+  .sp-guide-step-view { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .sp-guide-step-view:last-child { border-bottom: none; }
+  .sp-upload-progress { height: 3px; background: var(--accent); border-radius: 2px; transition: width 0.3s; margin-top: 4px; }
+
+  /* Inventory detail */
+  .sp-detail { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .sp-detail span { margin-right: 10px; }
+  .sp-badge {
+    display: inline-block;
+    background: rgba(59,130,246,0.15);
+    color: var(--accent);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+  .sp-count { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+
+  /* Order template items list */
+  .sp-order-items { margin-top: 6px; }
+  .sp-order-item { font-size: 11px; color: var(--muted); padding: 2px 0; display: flex; align-items: center; gap: 6px; }
+  .sp-order-item .qty { color: var(--accent); font-weight: 600; min-width: 24px; }
+  .sp-order-item .sp-item-rm { cursor: pointer; color: var(--red); opacity: 0.5; font-size: 13px; margin-left: auto; }
+  .sp-order-item .sp-item-rm:hover { opacity: 1; }
+
+  /* Copy button */
+  .sp-copy {
+    display: inline-block;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(59,130,246,0.1);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    user-select: all;
+    transition: all 0.2s;
+    margin-right: 4px;
+  }
+  .sp-copy:hover { background: rgba(59,130,246,0.25); }
+  .sp-copy:active { background: rgba(59,130,246,0.4); }
+  .sp-copied { color: var(--green) !important; background: rgba(16,185,129,0.15) !important; }
+
+  /* Search dropdown for order builder */
+  .sp-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .sp-dropdown-item {
+    padding: 8px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    transition: background 0.15s;
+  }
+  .sp-dropdown-item:hover { background: rgba(59,130,246,0.1); }
+  .sp-dropdown-item:last-child { border-bottom: none; }
+  .sp-dropdown-item .sp-dd-sub { font-size: 10px; color: var(--muted); }
+
+  /* Order builder item row */
+  .sp-ob-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    background: rgba(30,41,59,0.5);
+    border-radius: 6px;
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+  .sp-ob-item .sp-ob-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sp-ob-item input[type="number"] {
+    width: 48px;
+    background: var(--primary);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    text-align: center;
+  }
+  .sp-ob-item .sp-ob-rm { cursor: pointer; color: var(--red); opacity: 0.5; font-size: 14px; }
+  .sp-ob-item .sp-ob-rm:hover { opacity: 1; }
 
   .side-panel-overlay {
     position: fixed;
@@ -1262,7 +1432,7 @@
 </div>
 
 <!-- Side Panel Toggle -->
-<div class="side-panel-toggle" onclick="toggleSidePanel()">LINKS</div>
+<div class="side-panel-toggle" onclick="toggleSidePanel()">TOOLS</div>
 
 <!-- Side Panel Overlay -->
 <div class="side-panel-overlay" id="panel-overlay" onclick="toggleSidePanel()"></div>
@@ -1270,14 +1440,100 @@
 <!-- Side Panel -->
 <div class="side-panel" id="side-panel">
   <div class="side-panel-header">
-    <h3>Quick Links</h3>
+    <h3 id="sp-title">Quick Links</h3>
     <button class="side-panel-close" onclick="toggleSidePanel()">✕</button>
   </div>
-  <div class="side-panel-body" id="nav-links-list"></div>
-  <div class="add-link-form">
-    <input type="text" id="new-link-name" placeholder="Link name (e.g. BrightTree)">
-    <input type="url" id="new-link-url" placeholder="URL (e.g. https://...)">
-    <button class="btn-add-link" onclick="addNavLink()">+ Add Link</button>
+  <div class="sp-tab-bar">
+    <div class="sp-tab active" onclick="switchTab('links')">Links</div>
+    <div class="sp-tab" onclick="switchTab('inventory')">Inventory</div>
+    <div class="sp-tab" onclick="switchTab('guides')">Guides</div>
+    <div class="sp-tab" onclick="switchTab('orders')">Orders</div>
+  </div>
+
+  <!-- Tab 1: Quick Links -->
+  <div class="sp-tab-content active" id="tab-links">
+    <div class="sp-tab-body" id="nav-links-list"></div>
+    <div class="sp-tab-footer">
+      <input type="text" class="sp-search" id="new-link-name" placeholder="Link name (e.g. BrightTree)">
+      <input type="url" class="sp-search" id="new-link-url" placeholder="URL (e.g. https://...)">
+      <button class="sp-btn" onclick="addNavLink()">+ Add Link</button>
+    </div>
+  </div>
+
+  <!-- Tab 2: Inventory -->
+  <div class="sp-tab-content" id="tab-inventory">
+    <div style="padding:12px 12px 0">
+      <input type="text" class="sp-search" id="inv-search" placeholder="Search inventory..." oninput="filterInventory()">
+      <div class="sp-count" id="inv-count"></div>
+    </div>
+    <div class="sp-tab-body" id="inv-list" style="padding-top:0"></div>
+    <div class="sp-tab-footer" id="inv-footer">
+      <button class="sp-btn" onclick="showInvAddForm()">+ Add Item</button>
+    </div>
+    <!-- Add/Edit form -->
+    <div class="sp-tab-footer" id="inv-form" style="display:none;max-height:55vh;overflow-y:auto">
+      <input type="text" class="sp-search" id="inv-f-name" placeholder="Item Name *">
+      <div style="position:relative">
+        <input type="text" class="sp-search" id="inv-f-btid" placeholder="BrightTree ID — type to lookup" oninput="lookupBT()">
+        <div id="bt-lookup-dd" class="sp-dropdown" style="display:none"></div>
+      </div>
+      <div style="position:relative">
+        <input type="text" class="sp-search" id="inv-f-snapid" placeholder="SNAP ID — type to lookup" oninput="lookupSnap()">
+        <div id="snap-lookup-dd" class="sp-dropdown" style="display:none"></div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="sp-btn" style="flex:1" onclick="saveInvItem()">Save</button>
+        <button class="sp-btn" style="flex:1;background:var(--card2)" onclick="cancelInvForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 3: How to Guides -->
+  <div class="sp-tab-content" id="tab-guides">
+    <div class="sp-tab-body" id="guides-list"></div>
+    <div class="sp-tab-footer" id="guide-footer">
+      <button class="sp-btn" onclick="showGuideBuilder()">+ New Guide</button>
+    </div>
+    <!-- Guide builder (hidden) -->
+    <div class="sp-tab-footer" id="guide-builder" style="display:none;max-height:65vh;overflow-y:auto">
+      <input type="text" class="sp-search" id="gb-title" placeholder="Guide title *">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);margin:4px 0 6px;text-transform:uppercase;letter-spacing:0.5px">Steps</div>
+      <div id="gb-steps"></div>
+      <button class="sp-btn" style="background:rgba(59,130,246,0.15);color:var(--accent);font-size:11px;margin-bottom:8px" onclick="addGuideStep()">+ Add Step</button>
+      <div style="font-size:11px;font-weight:600;color:var(--muted);margin:4px 0 6px;text-transform:uppercase;letter-spacing:0.5px">PDF Attachment (optional)</div>
+      <div id="gb-pdf-area">
+        <label class="sp-file-btn">Choose PDF <input type="file" accept=".pdf" style="display:none" onchange="attachGuidePdf(this)"></label>
+        <span id="gb-pdf-name" style="font-size:11px;color:var(--muted);margin-left:8px"></span>
+      </div>
+      <div id="gb-upload-status" style="font-size:11px;color:var(--accent);margin-top:6px;display:none"></div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button class="sp-btn" style="flex:1" onclick="saveGuide()">Save Guide</button>
+        <button class="sp-btn" style="flex:1;background:var(--card2)" onclick="cancelGuideBuilder()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 4: Common Orders -->
+  <div class="sp-tab-content" id="tab-orders">
+    <div class="sp-tab-body" id="orders-list"></div>
+    <div class="sp-tab-footer" id="ord-footer">
+      <button class="sp-btn" onclick="showOrderBuilder()">+ New Order Template</button>
+    </div>
+    <!-- Order builder (hidden) -->
+    <div class="sp-tab-footer" id="ord-builder" style="display:none;max-height:60vh;overflow-y:auto">
+      <input type="text" class="sp-search" id="ord-b-name" placeholder="Template name (e.g. A11 Setups) *">
+      <input type="text" class="sp-search" id="ord-b-notes" placeholder="Notes (optional)">
+      <div style="font-size:11px;color:var(--muted);margin:6px 0 4px;font-weight:600">ITEMS IN THIS ORDER:</div>
+      <div id="ord-b-items"></div>
+      <div style="position:relative;margin-top:6px">
+        <input type="text" class="sp-search" id="ord-b-search" placeholder="Search inventory to add items..." oninput="orderSearchInventory()">
+        <div id="ord-b-results" class="sp-dropdown" style="display:none"></div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="sp-btn" style="flex:1" onclick="saveOrderTemplate()">Save Template</button>
+        <button class="sp-btn" style="flex:1;background:var(--card2)" onclick="cancelOrderBuilder()">Cancel</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1287,6 +1543,7 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 
 <script>
 // ── Firebase Init ──
@@ -1302,6 +1559,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const storage = firebase.storage();
 
 // Use today's date as the key so data resets daily
 function getTodayKey() {
@@ -1869,19 +2127,25 @@ setInterval(() => {
   }
 }, 30000); // check every 30 seconds
 
-// ── Side Panel / Quick Links ──
-const linksRef = db.ref('quickLinks');
-let navLinks = [];
+// ── Side Panel (Tabbed) ──
+const tabTitles = { links: 'Quick Links', inventory: 'Search Inventory', guides: 'How to Guides', orders: 'Common Orders' };
 
-linksRef.on('value', snap => {
-  navLinks = snap.val() || [];
-  renderNavLinks();
-});
+function switchTab(tab) {
+  document.querySelectorAll('.sp-tab').forEach((t, i) => t.classList.toggle('active', ['links','inventory','guides','orders'][i] === tab));
+  document.querySelectorAll('.sp-tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('sp-title').textContent = tabTitles[tab];
+}
 
 function toggleSidePanel() {
   document.getElementById('side-panel').classList.toggle('open');
   document.getElementById('panel-overlay').classList.toggle('show');
 }
+
+// ── Tab 1: Quick Links ──
+const linksRef = db.ref('quickLinks');
+let navLinks = [];
+linksRef.on('value', snap => { navLinks = snap.val() || []; renderNavLinks(); });
 
 function renderNavLinks() {
   const list = document.getElementById('nav-links-list');
@@ -1889,18 +2153,20 @@ function renderNavLinks() {
     list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px;font-size:12px">No links yet. Add one below!</div>';
     return;
   }
-  list.innerHTML = navLinks.map((link, i) => `
-    <div class="nav-link-item" onclick="window.open('${link.url}','_blank')">
+  list.innerHTML = navLinks.map((link, i) => {
+    const safeUrl = esc(link.url).replace(/'/g, '&#39;');
+    return `
+    <div class="nav-link-item" onclick="window.open('${safeUrl}','_blank')">
       <div style="flex:1;overflow:hidden">
-        <a href="${link.url}" target="_blank" onclick="event.stopPropagation()">${link.name}</a>
-        <span class="nav-link-url">${link.url}</span>
+        <a href="${safeUrl}" target="_blank" onclick="event.stopPropagation()">${esc(link.name)}</a>
+        <span class="nav-link-url">${esc(link.url)}</span>
       </div>
       <div class="nav-link-actions">
         <button onclick="event.stopPropagation();editNavLink(${i})" title="Edit">✏️</button>
         <button class="delete-link" onclick="event.stopPropagation();deleteNavLink(${i})" title="Delete">🗑</button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function addNavLink() {
@@ -1917,18 +2183,651 @@ function addNavLink() {
 
 function editNavLink(idx) {
   const link = navLinks[idx];
+  if (!link) return;
   const name = prompt('Link name:', link.name);
   if (name === null) return;
-  const url = prompt('URL:', link.url);
+  let url = prompt('URL:', link.url);
   if (url === null) return;
-  navLinks[idx] = { name: name.trim() || link.name, url: url.trim() || link.url };
+  url = url.trim() || link.url;
+  if (!url.startsWith('http')) url = 'https://' + url;
+  navLinks[idx] = { name: name.trim() || link.name, url };
   linksRef.set(navLinks);
 }
 
 function deleteNavLink(idx) {
-  if (!confirm('Delete "' + navLinks[idx].name + '"?')) return;
+  if (!navLinks[idx] || !confirm('Delete "' + navLinks[idx].name + '"?')) return;
   navLinks.splice(idx, 1);
   linksRef.set(navLinks);
+}
+
+// ── Tab 2: Inventory (Unified — Firebase-stored, BT/SNAP as lookup helpers) ──
+const BT_LOOKUP = [{"id":"1115-AC-40K","name":"Battery CPAP Zopec Explore 4000","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-AC-54K","name":"Battery CPAP Zopec Explore 5500","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-AC-80K","name":"Battery CPAP Zopec Explore 8000","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-AC-27K","name":"Battery CPAP Zopec Explore Mini","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-T5L","name":"CPAP Sanitizing Machine Paptizer LED","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-CAP2001","name":"CPAP Tubing Cover - Comfort","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-CAP2002","name":"CPAP Tubing Cover - Deluxe","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-CAP1003","name":"CPAP Wipes Citrus II","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-CAP1003 Cs","name":"CPAP Wipes Citrus II - Case","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-CAP1003S Cs","name":"CPAP Wipes Sunset - Case","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-CAP1003S","name":"CPAP Wipes Sunset Unscented","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-SF1000 Cs","name":"Mask Liner Full Face Snugz - Case","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-SF1000","name":"Mask Liner Full Face Snugz 2/pk","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-SN1000 Cs","name":"Mask Liner Nasal Snugz - Case","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-SN1000","name":"Mask Liner Nasal Snugz 2/pk","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-CP-18","name":"Nasal Lubricant 1 Oz Each","family":"","size":"","cat":"Accessories & Consumables"},{"id":"1115-BPSC-24V-RES","name":"Converter For 24V Devices Fits Resmed A10","family":"A10","size":"M","cat":"Accessories & Consumables"},{"id":"1115-70253","name":"Inverter For Resmed S8","family":"S8","size":"M","cat":"Accessories & Consumables"},{"id":"1115-BPS C-24V","name":"Converter For 24V Devices Fits Resmed S9","family":"S9","size":"M","cat":"Accessories & Consumables"},{"id":"1115-38842","name":"AirMini Bed Caddy","family":"","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1105-38814","name":"AirMini Disposable Filters - 1 Pack","family":"","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1105-38816","name":"AirMini Disposable Filters - 12 Pack","family":"","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1115-38848","name":"AirMini Filter Cover","family":"","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1115-38841","name":"AirMini Hard Travel Case","family":"","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1115-38840","name":"AirMini Premium Carry Bag","family":"","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1115-38843","name":"AirMini F20 Connector","family":"F20","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1109-38011","name":"AirMini F20 Setup Pack - (Mask Not Included)","family":"F20","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1115-38844","name":"AirMini N20 Connector","family":"N20","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1110-38823","name":"AirMini N20 Setup Pack - (Mask Not Included)","family":"N20","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1111-38878","name":"AirMini N30 Mask Pack w/ Mask","family":"N30","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1115-38845","name":"AirMini P10 Connector","family":"P10","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1111-38824","name":"AirMini P10 Mask Pack w/ Mask","family":"P10","size":"","cat":"AirMini \u2022 Accessory/Pack"},{"id":"1101-16015","name":"Chinstrap Resmed - Sullivan","family":"","size":"M","cat":"Chinstrap"},{"id":"1101-ChinPremium","name":"Chinstrap Respironics Premium","family":"","size":"","cat":"Chinstrap"},{"id":"1101-CS007-ADJ","name":"Chinstrap Ruby Style Fully Adjustable","family":"","size":"","cat":"Chinstrap"},{"id":"1101-CS007-ADJXL","name":"Chinstrap Ruby Style Fully Adjustable Extra Large","family":"","size":"","cat":"Chinstrap"},{"id":"1101-CS007L","name":"Chinstrap Ruby Style Lrg","family":"","size":"L","cat":"Chinstrap"},{"id":"1101-CS007M","name":"Chinstrap Ruby Style Med","family":"","size":"M","cat":"Chinstrap"},{"id":"1101-CS007S","name":"Chinstrap Ruby Style Sml","family":"","size":"S","cat":"Chinstrap"},{"id":"1101-CS004L","name":"Chinstrap Sunset Deluxe 28\"","family":"","size":"","cat":"Chinstrap"},{"id":"1101-CS006","name":"Chinstrap Sunset Premium Black","family":"","size":"","cat":"Chinstrap"},{"id":"B-Chinstrap A7036","name":"Pos airway press chinstrap","family":"","size":"","cat":"Chinstrap"},{"id":"G-Chinstrap","name":"Pos airway press chinstrap","family":"","size":"","cat":"Chinstrap"},{"id":"B-1102-A7031","name":"Cushion FullFace","family":"","size":"","cat":"Cushion \u2022 Full Face"},{"id":"1102-1090494","name":"Cushion FullFace Amara Gel Lrg","family":"Amara Gel","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-1090493","name":"Cushion FullFace Amara Gel Med","family":"Amara Gel","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-1090490","name":"Cushion FullFace Amara Gel Petite","family":"Amara Gel","size":"Petite","cat":"Cushion \u2022 Full Face"},{"id":"1102-1090492","name":"Cushion FullFace Amara Gel Sml","family":"Amara Gel","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-1090694","name":"Cushion FullFace Amara View Lrg","family":"Amara View","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-1090693","name":"Cushion FullFace Amara View Med","family":"Amara View","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-1090692","name":"Cushion FullFace Amara View Sml","family":"Amara View","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-1133432","name":"Cushion FullFace Dreamwear Lrg","family":"Dreamwear","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-1133431","name":"Cushion FullFace Dreamwear Med","family":"Dreamwear","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-1133433","name":"Cushion FullFace Dreamwear Med Wd","family":"Dreamwear","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-1133430","name":"Cushion FullFace Dreamwear Sml","family":"Dreamwear","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-400EVF116","name":"Cushion FullFace Evora Lrg","family":"Evora","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-400EVF115","name":"Cushion FullFace Evora Sml / Med","family":"Evora","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-400EVF114","name":"Cushion FullFace Evora X-Sml","family":"Evora","size":"XS","cat":"Cushion \u2022 Full Face"},{"id":"1102-62739","name":"Cushion FullFace Airfit F10/Quattro Air Lrg","family":"F10","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-62738","name":"Cushion FullFace Airfit F10/Quattro Air Med","family":"F10","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-62737","name":"Cushion FullFace Airfit F10/Quattro Air Sml","family":"F10","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-62736","name":"Cushion FullFace Airfit F10/Quattro Air X-Sml","family":"F10","size":"XS","cat":"Cushion \u2022 Full Face"},{"id":"1102-63030","name":"Cushion FullFace AirTouch F20 Lrg","family":"F20","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-63029","name":"Cushion FullFace AirTouch F20 Med","family":"F20","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-63028","name":"Cushion FullFace AirTouch F20 Sml","family":"F20","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-63469","name":"Cushion FullFace F20 Lrg","family":"F20","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-63469","name":"Cushion FullFace F20 Lrg","family":"F20","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-63468","name":"Cushion FullFace F20 Med","family":"F20","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-63468","name":"Cushion FullFace F20 Med","family":"F20","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-63467","name":"Cushion FullFace F20 Sml","family":"F20","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-63467","name":"Cushion FullFace F20 Sml","family":"F20","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-FF20L","name":"Cushion FullFace fits F20 Lrg","family":"F20","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-FF20L","name":"Cushion FullFace fits F20 Lrg","family":"F20","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-FF20M","name":"Cushion FullFace fits F20 Med","family":"F20","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-FF20M","name":"Cushion FullFace fits F20 Med","family":"F20","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-FF20S","name":"Cushion FullFace fits F20 Sml","family":"F20","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-FF20S","name":"Cushion FullFace fits F20 Sml","family":"F20","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-63351","name":"Cushion FullFace F30i Med","family":"F30i","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-63351","name":"Cushion FullFace F30i Med","family":"F30i","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-63350","name":"Cushion FullFace F30i Sml","family":"F30i","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-63350","name":"Cushion FullFace F30i Sml","family":"F30i","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-63352","name":"Cushion FullFace F30i Sml Wd","family":"F30i","size":"S/Wide","cat":"Cushion \u2022 Full Face"},{"id":"1102-63352","name":"Cushion FullFace F30i Sml Wd","family":"F30i","size":"S/Wide","cat":"Cushion \u2022 Full Face"},{"id":"1102-63353","name":"Cushion FullFace F30i Wd","family":"F30i","size":"Wide","cat":"Cushion \u2022 Full Face"},{"id":"1102-63353","name":"Cushion FullFace F30i Wd","family":"F30i","size":"Wide","cat":"Cushion \u2022 Full Face"},{"id":"1102-64629","name":"Cushion FullFace F40 Lrg","family":"F40","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-64629","name":"Cushion FullFace F40 Lrg","family":"F40","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-64628","name":"Cushion FullFace F40 Med","family":"F40","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-64628","name":"Cushion FullFace F40 Med","family":"F40","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-64627","name":"Cushion FullFace F40 Sml/Wd","family":"F40","size":"S/Wide","cat":"Cushion \u2022 Full Face"},{"id":"1102-64627","name":"Cushion FullFace F40 Sml/Wd","family":"F40","size":"S/Wide","cat":"Cushion \u2022 Full Face"},{"id":"1102-1090294","name":"Cushion FullFace Amara Silicone Lrg","family":"ICON","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-1090293","name":"Cushion FullFace Amara Silicone Med","family":"ICON","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-1090290","name":"Cushion FullFace Amara Silicone Petite","family":"ICON","size":"Petite","cat":"Cushion \u2022 Full Face"},{"id":"1102-1090292","name":"Cushion FullFace Amara Silicone Sml","family":"ICON","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-61293","name":"Cushion FullFace Mirage Quattro Lrg","family":"Mirage Quattro","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-61292","name":"Cushion FullFace Mirage Quattro Med","family":"Mirage Quattro","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-61291","name":"Cushion FullFace Mirage Quattro Sml","family":"Mirage Quattro","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-61290","name":"Cushion FullFace Mirage Quattro X-Sml","family":"Mirage Quattro","size":"XS","cat":"Cushion \u2022 Full Face"},{"id":"1102-61723","name":"Cushion FullFace Quattro FX Lrg","family":"Quattro FX","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-61722","name":"Cushion FullFace Quattro FX Med","family":"Quattro FX","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-61721","name":"Cushion FullFace Quattro FX Sml","family":"Quattro FX","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-400HC581","name":"Cushion FullFace Simplus Lrg","family":"Simplus","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-400HC580","name":"Cushion FullFace Simplus Med","family":"Simplus","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-400HC579","name":"Cushion FullFace Simplus Sml","family":"Simplus","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"1102-400VIT116","name":"Cushion FullFace Vitera Lrg","family":"Vitera","size":"L","cat":"Cushion \u2022 Full Face"},{"id":"1102-400VIT115","name":"Cushion FullFace Vitera Med","family":"Vitera","size":"M","cat":"Cushion \u2022 Full Face"},{"id":"1102-400VIT114","name":"Cushion FullFace Vitera Sml","family":"Vitera","size":"S","cat":"Cushion \u2022 Full Face"},{"id":"B-1102-A7032","name":"Cushion Nasal","family":"","size":"","cat":"Cushion \u2022 Nasal"},{"id":"1103-1070105","name":"Cushion Nasal ComfortGel Blue w/ Flap Nasal Lrg","family":"","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1070105","name":"Cushion Nasal ComfortGel Blue w/ Flap Nasal Lrg","family":"","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1070106","name":"Cushion Nasal ComfortGel Blue w/ Flap Nasal Med","family":"","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-1070106","name":"Cushion Nasal ComfortGel Blue w/ Flap Nasal Med","family":"","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-1070108","name":"Cushion Nasal ComfortGel Blue w/ Flap Nasal Petite","family":"","size":"Petite","cat":"Cushion \u2022 Nasal"},{"id":"1103-1070108","name":"Cushion Nasal ComfortGel Blue w/ Flap Nasal Petite","family":"","size":"Petite","cat":"Cushion \u2022 Nasal"},{"id":"1103-1070107","name":"Cushion Nasal ComfortGel Blue w/ Flap Nasal Sml","family":"","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-1070107","name":"Cushion Nasal ComfortGel Blue w/ Flap Nasal Sml","family":"","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-64214","name":"Cushion Nasal Airfit N30 Med","family":"AirFit N30","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-64213","name":"Cushion Nasal Airfit N30 Sml","family":"AirFit N30","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-64215","name":"Cushion Nasal Airfit N30 Sml Wd","family":"AirFit N30","size":"S/Wide","cat":"Cushion \u2022 Nasal"},{"id":"1103-63811","name":"Cushion Nasal AirFit N30i Med","family":"AirFit N30i","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-63813","name":"Cushion Nasal AirFit N30i Sml","family":"AirFit N30i","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-63810","name":"Cushion Nasal AirFit N30i Sml Wd","family":"AirFit N30i","size":"S/Wide","cat":"Cushion \u2022 Nasal"},{"id":"1103-63812","name":"Cushion Nasal AirFit N30i Wide","family":"AirFit N30i","size":"","cat":"Cushion \u2022 Nasal"},{"id":"1103-63952","name":"Cushion Nasal AirTouch N20 Lrg","family":"AirTouch N20","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-63951","name":"Cushion Nasal AirTouch N20 Med","family":"AirTouch N20","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-63950","name":"Cushion Nasal AirTouch N20 Sml","family":"AirTouch N20","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-62332","name":"Cushion Nasal AirTouch N30i Lrg","family":"AirTouch N30i","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-62331","name":"Cushion Nasal AirTouch N30i Med","family":"AirTouch N30i","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-62330","name":"Cushion Nasal AirTouch N30i SW","family":"AirTouch N30i","size":"","cat":"Cushion \u2022 Nasal"},{"id":"1103-63552","name":"Cushion Nasal Airfit N20 Lrg","family":"Airfit N20","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-63551","name":"Cushion Nasal Airfit N20 Med","family":"Airfit N20","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-63550","name":"Cushion Nasal Airfit N20 Sml","family":"Airfit N20","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-1137959","name":"Cushion Nasal DreamWisp Lrg","family":"DreamWisp","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1137959","name":"Cushion Nasal DreamWisp Lrg","family":"DreamWisp","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1137958","name":"Cushion Nasal DreamWisp Med","family":"DreamWisp","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-1137958","name":"Cushion Nasal DreamWisp Med","family":"DreamWisp","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-1137956","name":"Cushion Nasal DreamWisp Ptt","family":"DreamWisp","size":"Petite","cat":"Cushion \u2022 Nasal"},{"id":"1103-1137956","name":"Cushion Nasal DreamWisp Ptt","family":"DreamWisp","size":"Petite","cat":"Cushion \u2022 Nasal"},{"id":"1103-1137957","name":"Cushion Nasal DreamWisp Sml","family":"DreamWisp","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-1137957","name":"Cushion Nasal DreamWisp Sml","family":"DreamWisp","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-1137960","name":"Cushion Nasal DreamWisp X-Lrg","family":"DreamWisp","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1137960","name":"Cushion Nasal DreamWisp X-Lrg","family":"DreamWisp","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1116742","name":"Cushion Nasal Dreamwear Lrg","family":"Dreamwear","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1116742","name":"Cushion Nasal Dreamwear Lrg","family":"Dreamwear","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1116741","name":"Cushion Nasal Dreamwear Med","family":"Dreamwear","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-1116741","name":"Cushion Nasal Dreamwear Med","family":"Dreamwear","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-1116743","name":"Cushion Nasal Dreamwear Med-Wide","family":"Dreamwear","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-1116743","name":"Cushion Nasal Dreamwear Med-Wide","family":"Dreamwear","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-1116740","name":"Cushion Nasal Dreamwear Sml","family":"Dreamwear","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-1116740","name":"Cushion Nasal Dreamwear Sml","family":"Dreamwear","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-400HC128","name":"Cushion Nasal Eson Lrg","family":"Eson","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-400HC128","name":"Cushion Nasal Eson Lrg","family":"Eson","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-400HC127","name":"Cushion Nasal Eson Med","family":"Eson","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-400HC127","name":"Cushion Nasal Eson Med","family":"Eson","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-400HC126","name":"Cushion Nasal Eson Sml","family":"Eson","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-400HC126","name":"Cushion Nasal Eson Sml","family":"Eson","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-400ESN216","name":"Cushion Nasal Eson2 Lrg","family":"Eson2","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-400ESN216","name":"Cushion Nasal Eson2 Lrg","family":"Eson2","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-400ESN215","name":"Cushion Nasal Eson2 Med","family":"Eson2","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-400ESN215","name":"Cushion Nasal Eson2 Med","family":"Eson2","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-400ESN214","name":"Cushion Nasal Eson2 Sml","family":"Eson2","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-400ESN214","name":"Cushion Nasal Eson2 Sml","family":"Eson2","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-400EVO117","name":"Cushion Nasal Evora Lrg","family":"Evora","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-400EVO117","name":"Cushion Nasal Evora Lrg","family":"Evora","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-400EVO116","name":"Cushion Nasal Evora Med","family":"Evora","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-400EVO116","name":"Cushion Nasal Evora Med","family":"Evora","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-400EVO115","name":"Cushion Nasal Evora Sml","family":"Evora","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-400EVO115","name":"Cushion Nasal Evora Sml","family":"Evora","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-400EVO118","name":"Cushion Nasal Evora Wd","family":"Evora","size":"Wide","cat":"Cushion \u2022 Nasal"},{"id":"1103-400EVO118","name":"Cushion Nasal Evora Wd","family":"Evora","size":"Wide","cat":"Cushion \u2022 Nasal"},{"id":"1103-62136","name":"Cushion Nasal Mirage FX Cushion Sml","family":"Mirage FX","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-62111","name":"Cushion Nasal Mirage FX Cushion Std","family":"Mirage FX","size":"Std","cat":"Cushion \u2022 Nasal"},{"id":"1103-62125","name":"Cushion Nasal Mirage FX Cushion Wide","family":"Mirage FX","size":"","cat":"Cushion \u2022 Nasal"},{"id":"1103-FN20L","name":"Cushion Nasal fits N20 Lrg","family":"N20","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-FN20M","name":"Cushion Nasal fits N20 Med","family":"N20","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-FN20S","name":"Cushion Nasal fits N20 Sml","family":"N20","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-1104937","name":"Cushion Nasal Pico Lrg","family":"Pico","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1104937","name":"Cushion Nasal Pico Lrg","family":"Pico","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1104936","name":"Cushion Nasal Pico Sml/Med","family":"Pico","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-1104936","name":"Cushion Nasal Pico Sml/Med","family":"Pico","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-1104938","name":"Cushion Nasal Pico X-Lrg","family":"Pico","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1104938","name":"Cushion Nasal Pico X-Lrg","family":"Pico","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-400SLN117","name":"Cushion Nasal Solo Seal Lrg","family":"Solo","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-400SLN117","name":"Cushion Nasal Solo Seal Lrg","family":"Solo","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-400SLN116","name":"Cushion Nasal Solo Seal Med","family":"Solo","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-400SLN116","name":"Cushion Nasal Solo Seal Med","family":"Solo","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-400SLN115","name":"Cushion Nasal Solo Seal Sml","family":"Solo","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-400SLN115","name":"Cushion Nasal Solo Seal Sml","family":"Solo","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-400SLN118","name":"Cushion Nasal Solo Seal Wd","family":"Solo","size":"Wide","cat":"Cushion \u2022 Nasal"},{"id":"1103-400SLN118","name":"Cushion Nasal Solo Seal Wd","family":"Solo","size":"Wide","cat":"Cushion \u2022 Nasal"},{"id":"1103-1094088","name":"Cushion Nasal Wisp Lrg","family":"Wisp","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1094088","name":"Cushion Nasal Wisp Lrg","family":"Wisp","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1104971","name":"Cushion Nasal Wisp Pediatric Lrg","family":"Wisp","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1104971","name":"Cushion Nasal Wisp Pediatric Lrg","family":"Wisp","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1104970","name":"Cushion Nasal Wisp Pediatric Med","family":"Wisp","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-1104970","name":"Cushion Nasal Wisp Pediatric Med","family":"Wisp","size":"M","cat":"Cushion \u2022 Nasal"},{"id":"1103-1104969","name":"Cushion Nasal Wisp Pediatric Sml","family":"Wisp","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-1104969","name":"Cushion Nasal Wisp Pediatric Sml","family":"Wisp","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-1094086","name":"Cushion Nasal Wisp Ptt","family":"Wisp","size":"Petite","cat":"Cushion \u2022 Nasal"},{"id":"1103-1094086","name":"Cushion Nasal Wisp Ptt","family":"Wisp","size":"Petite","cat":"Cushion \u2022 Nasal"},{"id":"1103-1094087","name":"Cushion Nasal Wisp Sml/Med","family":"Wisp","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-1094087","name":"Cushion Nasal Wisp Sml/Med","family":"Wisp","size":"S","cat":"Cushion \u2022 Nasal"},{"id":"1103-1112031","name":"Cushion Nasal Wisp X-Lrg","family":"Wisp","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"1103-1112031","name":"Cushion Nasal Wisp X-Lrg","family":"Wisp","size":"L","cat":"Cushion \u2022 Nasal"},{"id":"B-1104-A7033","name":"Cushion Nasal Pillow","family":"","size":"","cat":"Cushion \u2022 Pillow"},{"id":"1104-62933","name":"Cushion Pillow Airfit P10 Lrg","family":"Airfit P10","size":"L","cat":"Cushion \u2022 Pillow"},{"id":"1104-62932","name":"Cushion Pillow Airfit P10 Med","family":"Airfit P10","size":"M","cat":"Cushion \u2022 Pillow"},{"id":"1104-62931","name":"Cushion Pillow Airfit P10 Sml","family":"Airfit P10","size":"S","cat":"Cushion \u2022 Pillow"},{"id":"1104-62930","name":"Cushion Pillow Airfit P10 X-Sml","family":"Airfit P10","size":"XS","cat":"Cushion \u2022 Pillow"},{"id":"1104-63863","name":"Cushion Pillow Airfit P30i Lrg","family":"Airfit P30i","size":"L","cat":"Cushion \u2022 Pillow"},{"id":"1104-63862","name":"Cushion Pillow Airfit P30i Med","family":"Airfit P30i","size":"M","cat":"Cushion \u2022 Pillow"},{"id":"1104-63861","name":"Cushion Pillow Airfit P30i Sml","family":"Airfit P30i","size":"S","cat":"Cushion \u2022 Pillow"},{"id":"1104-400BRE114","name":"Cushion Pillow Brevida Seal Med / Lrg","family":"Brevida","size":"M","cat":"Cushion \u2022 Pillow"},{"id":"1104-400BRE113","name":"Cushion Pillow Brevida Seal X-Sml / Sml","family":"Brevida","size":"XS","cat":"Cushion \u2022 Pillow"},{"id":"1104-1146474","name":"Cushion Pillow DreamWear Silicone Lrg","family":"Dreamwear","size":"L","cat":"Cushion \u2022 Pillow"},{"id":"1104-1146473","name":"Cushion Pillow DreamWear Silicone Med","family":"Dreamwear","size":"M","cat":"Cushion \u2022 Pillow"},{"id":"1104-1146475","name":"Cushion Pillow DreamWear Silicone Med Wd","family":"Dreamwear","size":"M","cat":"Cushion \u2022 Pillow"},{"id":"1104-1146472","name":"Cushion Pillow DreamWear Silicone Sml","family":"Dreamwear","size":"S","cat":"Cushion \u2022 Pillow"},{"id":"1104-400NVP116","name":"Cushion Pillow Nova Micro Seal Lrg","family":"Nova Micro","size":"L","cat":"Cushion \u2022 Pillow"},{"id":"1104-400NVP115","name":"Cushion Pillow Nova Micro Seal Med","family":"Nova Micro","size":"M","cat":"Cushion \u2022 Pillow"},{"id":"1104-400NVP114","name":"Cushion Pillow Nova Micro Seal Sml","family":"Nova Micro","size":"S","cat":"Cushion \u2022 Pillow"},{"id":"1104-400HC125","name":"Cushion Pillow Pilairo One Size Fits Most","family":"Pilairo","size":"One Size","cat":"Cushion \u2022 Pillow"},{"id":"1104-400SLP116","name":"Cushion Pillow Solo Seal Lrg","family":"Solo","size":"L","cat":"Cushion \u2022 Pillow"},{"id":"1104-400SLP115","name":"Cushion Pillow Solo Seal Med","family":"Solo","size":"M","cat":"Cushion \u2022 Pillow"},{"id":"1104-400SLP114","name":"Cushion Pillow Solo Seal Sml","family":"Solo","size":"S","cat":"Cushion \u2022 Pillow"},{"id":"1104-61523","name":"Cushion Pillow Swift FX Lrg","family":"Swift FX","size":"L","cat":"Cushion \u2022 Pillow"},{"id":"1104-61522","name":"Cushion Pillow Swift FX Med","family":"Swift FX","size":"M","cat":"Cushion \u2022 Pillow"},{"id":"1104-61521","name":"Cushion Pillow Swift FX Sml","family":"Swift FX","size":"S","cat":"Cushion \u2022 Pillow"},{"id":"1104-61520","name":"Cushion Pillow Swift FX X-Sml","family":"Swift FX","size":"XS","cat":"Cushion \u2022 Pillow"},{"id":"1115-BF018","name":"Filter Air Intake fits Sunset Nebulizer","family":"","size":"","cat":"Filter \u2022 Disposable"},{"id":"1105-FilterMSer","name":"Filter Disposable Fits M Series","family":"","size":"","cat":"Filter \u2022 Disposable"},{"id":"1105-FilterPR1","name":"Filter Disposable Fits Pr1","family":"","size":"","cat":"Filter \u2022 Disposable"},{"id":"G-Filter Mock Item","name":"Filter Disposable Mock Item","family":"","size":"","cat":"Filter \u2022 Disposable"},{"id":"1105-FilterRemStar","name":"Filter Disposable Ultra-Fine Fits RemStar Pro & II","family":"","size":"","cat":"Filter \u2022 Disposable"},{"id":"1105-CF-39300-1","name":"Filter Disposable fits Airsense 11","family":"","size":"","cat":"Filter \u2022 Disposable"},{"id":"1105-FilterA11","name":"Filter Disposable fits Airsense 11","family":"","size":"","cat":"Filter \u2022 Disposable"},{"id":"B-1105-A7038","name":"Filter Disposable for PAP Device","family":"","size":"","cat":"Filter \u2022 Disposable"},{"id":"1105-FilterS9/A10","name":"Filter Disposable S9/A10","family":"A10","size":"","cat":"Filter \u2022 Disposable"},{"id":"1105-FilterS9/A10 Pk","name":"Filter Disposable S9/A10 50/pack","family":"A10","size":"","cat":"Filter \u2022 Disposable"},{"id":"1105-1122447","name":"Filter Disposable Fits DreamStation","family":"DreamStation","size":"","cat":"Filter \u2022 Disposable"},{"id":"1106-FilterDS1","name":"Filter Disposable fits Dreamstation","family":"DreamStation","size":"","cat":"Filter \u2022 Disposable"},{"id":"1105-FilterDS2","name":"Filter Disposable Fits DreamStation 2","family":"DreamStation 2","size":"","cat":"Filter \u2022 Disposable"},{"id":"1105-CF4003-1","name":"Filter Disposable Fits ICON","family":"ICON","size":"","cat":"Filter \u2022 Disposable"},{"id":"1105-FilterLunaII","name":"Filter Disposable Luna II","family":"Luna II","size":"","cat":"Filter \u2022 Disposable"},{"id":"1105-FilterS8","name":"Filter Disposable Fits S8","family":"S8","size":"","cat":"Filter \u2022 Disposable"},{"id":"1106-NDFilterRemStar","name":"Filter Reusable Filter fits RemStar Pro & Pro II","family":"","size":"","cat":"Filter \u2022 Reusable"},{"id":"1106-NDFilterMSer","name":"Filter Reusable Fits M Series","family":"","size":"","cat":"Filter \u2022 Reusable"},{"id":"B-1106-A7039","name":"Filter Reusable For PAP Device","family":"","size":"","cat":"Filter \u2022 Reusable"},{"id":"1105-NDFilterPR1","name":"Filter Reusable fits PR1 System 1","family":"","size":"","cat":"Filter \u2022 Reusable"},{"id":"1106-1122446","name":"Filter Reusable Fits DreamStation","family":"DreamStation","size":"","cat":"Filter \u2022 Reusable"},{"id":"1105-NDFilterDS1","name":"Filter Reusable fits Dreamstation","family":"DreamStation","size":"","cat":"Filter \u2022 Reusable"},{"id":"1106-NDFilterDS2","name":"Filter Reusable Fits DreamStation 2","family":"DreamStation 2","size":"","cat":"Filter \u2022 Reusable"},{"id":"1106-NDFilterLunaII","name":"Filter Reusable Fits Luna II","family":"Luna II","size":"","cat":"Filter \u2022 Reusable"},{"id":"1109-1090416","name":"Frame FullFace Amara Gel Lrg","family":"Amara Gel","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-1090415","name":"Frame FullFace Amara Gel Med","family":"Amara Gel","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-1090410","name":"Frame FullFace Amara Gel Petite","family":"Amara Gel","size":"Petite","cat":"Frame \u2022 Full Face"},{"id":"1109-1090411","name":"Frame FullFace Amara Gel Sml","family":"Amara Gel","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-1090634","name":"Frame FullFace Amara View Lrg","family":"Amara View","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-1090633","name":"Frame FullFace Amara View Med","family":"Amara View","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-1090632","name":"Frame FullFace Amara View Sml","family":"Amara View","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-1133417","name":"Frame FullFace Dreamwear Lrg Cush on Lrg Frame","family":"Dreamwear","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-1133407","name":"Frame FullFace Dreamwear Lrg Cush on Med Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-1133412","name":"Frame FullFace Dreamwear Lrg Cush on Sml Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-1133416","name":"Frame FullFace Dreamwear Med Cush on Lrg Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-1133406","name":"Frame FullFace Dreamwear Med Cush on Med Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-1133411","name":"Frame FullFace Dreamwear Med Cush on Sml Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-1133418","name":"Frame FullFace Dreamwear Med Wd Cush on Lrg Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-1133408","name":"Frame FullFace Dreamwear Med Wd Cush on Med Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-1133413","name":"Frame FullFace Dreamwear Med Wd Cush on Sml Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-1133415","name":"Frame FullFace Dreamwear Sml Cush on Lrg Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-1133405","name":"Frame FullFace Dreamwear Sml Cush on Med Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-1133410","name":"Frame FullFace Dreamwear Sml Cush on Sml Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-400EVF133","name":"Frame FullFace Evora Lrg","family":"Evora","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-400EVF132","name":"Frame FullFace Evora Sml / Med","family":"Evora","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-400EVF131","name":"Frame FullFace Evora X-Sml","family":"Evora","size":"XS","cat":"Frame \u2022 Full Face"},{"id":"1109-63163","name":"Frame FullFace Airfit F10 Lrg","family":"F10","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-63162","name":"Frame FullFace Airfit F10 Med","family":"F10","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-63161","name":"Frame FullFace Airfit F10 Sml","family":"F10","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-63160","name":"Frame FullFace Airfit F10 X-Sml","family":"F10","size":"XS","cat":"Frame \u2022 Full Face"},{"id":"1109-63025","name":"Frame FullFace AirTouch F20 For Her Med","family":"F20","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-63024","name":"Frame FullFace AirTouch F20 For Her Sml","family":"F20","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-63023","name":"Frame FullFace AirTouch F20 Lrg","family":"F20","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-63022","name":"Frame FullFace AirTouch F20 Med","family":"F20","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-63021","name":"Frame FullFace AirTouch F20 Sml","family":"F20","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-63464","name":"Frame FullFace Airfit F20 For Her Med","family":"F20","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-63463","name":"Frame FullFace Airfit F20 For Her Sml","family":"F20","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-63462","name":"Frame FullFace Airfit F20 Lrg","family":"F20","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-63461","name":"Frame FullFace Airfit F20 Med","family":"F20","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-63460","name":"Frame FullFace Airfit F20 Sml","family":"F20","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-63364","name":"Frame FullFace F30i Med Cush on Lrg Frame","family":"F30i","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-63356","name":"Frame FullFace F30i Med Cush on Sml Frame","family":"F30i","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-63360","name":"Frame FullFace F30i Med Cush on Std Frame","family":"F30i","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-63363","name":"Frame FullFace F30i Sml Cush on Lrg Frame","family":"F30i","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-63355","name":"Frame FullFace F30i Sml Cush on Sml Frame","family":"F30i","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-63359","name":"Frame FullFace F30i Sml Cush on Std Frame","family":"F30i","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-63365","name":"Frame FullFace F30i Sml Wd Cush on Lrg Frame","family":"F30i","size":"S/Wide","cat":"Frame \u2022 Full Face"},{"id":"1109-63357","name":"Frame FullFace F30i Sml Wd Cush on Sml Frame","family":"F30i","size":"S/Wide","cat":"Frame \u2022 Full Face"},{"id":"1109-63361","name":"Frame FullFace F30i Sml Wd Cush on Std Frame","family":"F30i","size":"S/Wide","cat":"Frame \u2022 Full Face"},{"id":"1109-63366","name":"Frame FullFace F30i Wd Cush on Lrg Frame","family":"F30i","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-63358","name":"Frame FullFace F30i Wd Cush on Sml Frame","family":"F30i","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-63362","name":"Frame FullFace F30i Wd Cush on Std Frame","family":"F30i","size":"Wide","cat":"Frame \u2022 Full Face"},{"id":"1109-64609","name":"Frame FullFace Airfit F40 Lrg","family":"F40","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-64608","name":"Frame FullFace Airfit F40 Med","family":"F40","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-64607","name":"Frame FullFace Airfit F40 Sml Wd","family":"F40","size":"S/Wide","cat":"Frame \u2022 Full Face"},{"id":"1109-1072531","name":"Frame FullFace FitLife Large","family":"FitLife","size":"","cat":"Frame \u2022 Full Face"},{"id":"1109-1072530","name":"Frame FullFace FitLife Small","family":"FitLife","size":"","cat":"Frame \u2022 Full Face"},{"id":"1109-1089992","name":"Frame FullFace FitLife X-Large","family":"FitLife","size":"","cat":"Frame \u2022 Full Face"},{"id":"1109-61263","name":"Frame FullFace Mirage Quattro Lrg","family":"Mirage Quattro","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-61262","name":"Frame FullFace Mirage Quattro Med","family":"Mirage Quattro","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-61261","name":"Frame FullFace Mirage Quattro Sml","family":"Mirage Quattro","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-61260","name":"Frame FullFace Mirage Quattro X-Sml","family":"Mirage Quattro","size":"XS","cat":"Frame \u2022 Full Face"},{"id":"1109-62755","name":"Frame FullFace Quattro Air Lrg","family":"Quattro Air","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-62754","name":"Frame FullFace Quattro Air Med","family":"Quattro Air","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-62753","name":"Frame FullFace Quattro Air Sml","family":"Quattro Air","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-62752","name":"Frame FullFace Quattro Air X-Sml","family":"Quattro Air","size":"XS","cat":"Frame \u2022 Full Face"},{"id":"1109-62514","name":"Frame FullFace Quattro FX Her Med","family":"Quattro FX","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-62513","name":"Frame FullFace Quattro FX Her Sml","family":"Quattro FX","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-61726","name":"Frame FullFace Quattro FX Lrg","family":"Quattro FX","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-61725","name":"Frame FullFace Quattro FX Med","family":"Quattro FX","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-61724","name":"Frame FullFace Quattro FX Sml","family":"Quattro FX","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-400HC586","name":"Frame FullFace Simplus Lrg","family":"Simplus","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-400HC585","name":"Frame FullFace Simplus Med","family":"Simplus","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-400HC584","name":"Frame FullFace Simplus Sml","family":"Simplus","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1109-400VIT133","name":"Frame FullFace Vitera Lrg","family":"Vitera","size":"L","cat":"Frame \u2022 Full Face"},{"id":"1109-400VIT132","name":"Frame FullFace Vitera Med","family":"Vitera","size":"M","cat":"Frame \u2022 Full Face"},{"id":"1109-400VIT131","name":"Frame FullFace Vitera Sml","family":"Vitera","size":"S","cat":"Frame \u2022 Full Face"},{"id":"1110-1070041","name":"Frame Nasal ComfortGel Nasal Blue Lrg","family":"","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-1070042","name":"Frame Nasal ComfortGel Nasal Blue Med","family":"","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-1070044","name":"Frame Nasal ComfortGel Nasal Blue Petite","family":"","size":"Petite","cat":"Frame \u2022 Nasal"},{"id":"1110-1070043","name":"Frame Nasal ComfortGel Nasal Blue Sml","family":"","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-64211","name":"Frame Nasal AirFit N30 Med","family":"AirFit N30","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-64210","name":"Frame Nasal AirFit N30 Sml","family":"AirFit N30","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-64212","name":"Frame Nasal AirFit N30 Sml Wd","family":"AirFit N30","size":"S/Wide","cat":"Frame \u2022 Nasal"},{"id":"1110-63805","name":"Frame Nasal Airfit N30i Med Cush on Sml Frame","family":"AirFit N30i","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-63804","name":"Frame Nasal Airfit N30i Med Cush on Std Frame","family":"AirFit N30i","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-63803","name":"Frame Nasal Airfit N30i Sml Cush on Sml Frame","family":"AirFit N30i","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-63802","name":"Frame Nasal Airfit N30i Sml Cush on Std Frame","family":"AirFit N30i","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-63809","name":"Frame Nasal Airfit N30i Sml Wide Cush on Sml Frame","family":"AirFit N30i","size":"S/Wide","cat":"Frame \u2022 Nasal"},{"id":"1110-63808","name":"Frame Nasal Airfit N30i Sml Wide Cush on Std Frame","family":"AirFit N30i","size":"S/Wide","cat":"Frame \u2022 Nasal"},{"id":"1110-63807","name":"Frame Nasal Airfit N30i Wide Cush on Sml Frame","family":"AirFit N30i","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-63806","name":"Frame Nasal Airfit N30i Wide Cush on Std Frame","family":"AirFit N30i","size":"Std","cat":"Frame \u2022 Nasal"},{"id":"1110-63954","name":"Frame Nasal AirTouch N20 For Her Sml","family":"AirTouch N20","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-63956","name":"Frame Nasal AirTouch N20 Lrg","family":"AirTouch N20","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-63955","name":"Frame Nasal AirTouch N20 Med","family":"AirTouch N20","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-63953","name":"Frame Nasal AirTouch N20 Sml","family":"AirTouch N20","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-62321","name":"Frame Nasal AirTouch N30i Lrg Cush on Sml Frame","family":"AirTouch N30i","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-62318","name":"Frame Nasal AirTouch N30i Lrg Cush on Std Frame","family":"AirTouch N30i","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-62320","name":"Frame Nasal AirTouch N30i Med Cush on Sml Frame","family":"AirTouch N30i","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-62317","name":"Frame Nasal AirTouch N30i Med Cush on Std Frame","family":"AirTouch N30i","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-62319","name":"Frame Nasal AirTouch N30i SW Cush on Sml Frame","family":"AirTouch N30i","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-62316","name":"Frame Nasal AirTouch N30i SW Cush on Std Frame","family":"AirTouch N30i","size":"Std","cat":"Frame \u2022 Nasal"},{"id":"1110-63554","name":"Frame Nasal Airfit N20 For Her Sml","family":"Airfit N20","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-63556","name":"Frame Nasal Airfit N20 Lrg","family":"Airfit N20","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-63555","name":"Frame Nasal Airfit N20 Med","family":"Airfit N20","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-63553","name":"Frame Nasal Airfit N20 Sml","family":"Airfit N20","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-400BRE132","name":"Frame Nasal Brevida Med / Lrg","family":"Brevida","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-400BRE131","name":"Frame Nasal Brevida X-Sml / Sml","family":"Brevida","size":"XS","cat":"Frame \u2022 Nasal"},{"id":"1110-1137925","name":"Frame Nasal DreamWisp - Lrg","family":"DreamWisp","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-1137924","name":"Frame Nasal DreamWisp - Med","family":"DreamWisp","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-1137922","name":"Frame Nasal DreamWisp - Ptt","family":"DreamWisp","size":"Petite","cat":"Frame \u2022 Nasal"},{"id":"1110-1137923","name":"Frame Nasal DreamWisp - Sml","family":"DreamWisp","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-1137926","name":"Frame Nasal DreamWisp - X-Lrg","family":"DreamWisp","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-1116717","name":"Frame Nasal Dreamwear Lrg Cush on Large Frame","family":"Dreamwear","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-1116707","name":"Frame Nasal Dreamwear Lrg Cush on Med Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-1116712","name":"Frame Nasal Dreamwear Lrg Cush on Sml Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-1116716","name":"Frame Nasal Dreamwear Med Cush on Large Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-1116706","name":"Frame Nasal Dreamwear Med Cush on Med Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-1116711","name":"Frame Nasal Dreamwear Med Cush on Sml Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-1116718","name":"Frame Nasal Dreamwear Med-Wide Cush on Large Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-1116708","name":"Frame Nasal Dreamwear Med-Wide Cush on Med Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-1116713","name":"Frame Nasal Dreamwear Med-Wide Cush on Sml Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-1116715","name":"Frame Nasal Dreamwear Sml Cush on Large Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-1116705","name":"Frame Nasal Dreamwear Sml Cush on Med Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-1116710","name":"Frame Nasal Dreamwear Sml Cush on Sml Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-400HC573","name":"Frame Nasal Eson Lrg","family":"Eson","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-400HC572","name":"Frame Nasal Eson Med","family":"Eson","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-400HC571","name":"Frame Nasal Eson Sml","family":"Eson","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-400ESN233","name":"Frame Nasal Eson2 Lrg","family":"Eson2","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-400ESN232","name":"Frame Nasal Eson2 Med","family":"Eson2","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-400ESN231","name":"Frame Nasal Eson2 Sml","family":"Eson2","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-400EVO133","name":"Frame Nasal Evora Lrg","family":"Evora","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-400EVO132","name":"Frame Nasal Evora Med","family":"Evora","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-400EVO131","name":"Frame Nasal Evora Sml","family":"Evora","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-400EVO134","name":"Frame Nasal Evora Wd","family":"Evora","size":"Wide","cat":"Frame \u2022 Nasal"},{"id":"1110-62137","name":"Frame Nasal Mirage FX Her Sml","family":"Mirage FX","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-62112","name":"Frame Nasal Mirage FX Std","family":"Mirage FX","size":"Std","cat":"Frame \u2022 Nasal"},{"id":"1110-62126","name":"Frame Nasal Mirage FX Wide","family":"Mirage FX","size":"","cat":"Frame \u2022 Nasal"},{"id":"1110-400NVP133","name":"Frame Nasal Nova Micro Lrg","family":"Nova Micro","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-400NVP132","name":"Frame Nasal Nova Micro Med","family":"Nova Micro","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-400NVP131","name":"Frame Nasal Nova Micro Sml","family":"Nova Micro","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-1104919","name":"Frame Nasal Pico Lrg","family":"Pico","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-1104918","name":"Frame Nasal Pico Sml/Med","family":"Pico","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-1104920","name":"Frame Nasal Pico X-Lrg","family":"Pico","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-400HC565","name":"Frame Nasal Pilairo Std","family":"Pilairo","size":"Std","cat":"Frame \u2022 Nasal"},{"id":"1110-400SLN133","name":"Frame Nasal Solo Lrg","family":"Solo","size":"L","cat":"Frame \u2022 Nasal"},{"id":"1110-400SLN132","name":"Frame Nasal Solo Med","family":"Solo","size":"M","cat":"Frame \u2022 Nasal"},{"id":"1110-400SLN131","name":"Frame Nasal Solo Sml","family":"Solo","size":"S","cat":"Frame \u2022 Nasal"},{"id":"1110-400SLN134","name":"Frame Nasal Solo Wd","family":"Solo","size":"Wide","cat":"Frame \u2022 Nasal"},{"id":"1110-1094055","name":"Frame Nasal Wisp Clear","family":"Wisp","size":"","cat":"Frame \u2022 Nasal"},{"id":"1110-1094056","name":"Frame Nasal Wisp Fabric","family":"Wisp","size":"","cat":"Frame \u2022 Nasal"},{"id":"1110-1104972","name":"Frame Nasal Wisp Pediatric","family":"Wisp","size":"","cat":"Frame \u2022 Nasal"},{"id":"1111-62923","name":"Frame Pillow Airfit P10 Lrg","family":"Airfit P10","size":"L","cat":"Frame \u2022 Pillow"},{"id":"1111-62922","name":"Frame Pillow Airfit P10 Med","family":"Airfit P10","size":"M","cat":"Frame \u2022 Pillow"},{"id":"1111-62921","name":"Frame Pillow Airfit P10 Sml","family":"Airfit P10","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1111-62920","name":"Frame Pillow Airfit P10 X-Sml","family":"Airfit P10","size":"XS","cat":"Frame \u2022 Pillow"},{"id":"1111-63853","name":"Frame Pillow Airfit P30i Lrg Cush on Sml Frame","family":"Airfit P30i","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1111-63852","name":"Frame Pillow Airfit P30i Lrg Cush on Std Frame","family":"Airfit P30i","size":"L","cat":"Frame \u2022 Pillow"},{"id":"1111-63855","name":"Frame Pillow Airfit P30i Med Cush on Sml Frame","family":"Airfit P30i","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1111-63854","name":"Frame Pillow Airfit P30i Med Cush on Std Frame","family":"Airfit P30i","size":"M","cat":"Frame \u2022 Pillow"},{"id":"1111-63857","name":"Frame Pillow Airfit P30i Sml Cush on Sml Frame","family":"Airfit P30i","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1111-63856","name":"Frame Pillow Airfit P30i Sml Cush on Std Frame","family":"Airfit P30i","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1110-1146463","name":"Frame Nasal Dreamwear Lrg Pillow on Lrg Frame","family":"Dreamwear","size":"L","cat":"Frame \u2022 Pillow"},{"id":"1110-1146459","name":"Frame Nasal Dreamwear Lrg Pillow on Med Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Pillow"},{"id":"1110-1146455","name":"Frame Nasal Dreamwear Lrg Pillow on Sml Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1110-1146464","name":"Frame Nasal Dreamwear MW Pillow on Lrg Frame","family":"Dreamwear","size":"L","cat":"Frame \u2022 Pillow"},{"id":"1110-1146460","name":"Frame Nasal Dreamwear MW Pillow on Med Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Pillow"},{"id":"1110-1146456","name":"Frame Nasal Dreamwear MW Pillow on Sml Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1110-1146462","name":"Frame Nasal Dreamwear Med Pillow on Lrg Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Pillow"},{"id":"1110-1146458","name":"Frame Nasal Dreamwear Med Pillow on Med Frame","family":"Dreamwear","size":"M","cat":"Frame \u2022 Pillow"},{"id":"1110-1146454","name":"Frame Nasal Dreamwear Med Pillow on Sml Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1110-1146461","name":"Frame Nasal Dreamwear Sml Pillow on Lrg Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1110-1146457","name":"Frame Nasal Dreamwear Sml Pillow on Med Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1110-1146453","name":"Frame Nasal Dreamwear Sml Pillow on Sml Frame","family":"Dreamwear","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1110-400SLP133","name":"Frame Nasal Solo Pillows Lrg","family":"Solo","size":"L","cat":"Frame \u2022 Pillow"},{"id":"1110-400SLP132","name":"Frame Nasal Solo Pillows Med","family":"Solo","size":"M","cat":"Frame \u2022 Pillow"},{"id":"1110-400SLP131","name":"Frame Nasal Solo Pillows Sml","family":"Solo","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1111-61513","name":"Frame Pillow Swift FX Lrg","family":"Swift FX","size":"L","cat":"Frame \u2022 Pillow"},{"id":"1111-61512","name":"Frame Pillow Swift FX Med","family":"Swift FX","size":"M","cat":"Frame \u2022 Pillow"},{"id":"1111-61511","name":"Frame Pillow Swift FX Sml","family":"Swift FX","size":"S","cat":"Frame \u2022 Pillow"},{"id":"1111-61510","name":"Frame Pillow Swift FX X-Sml","family":"Swift FX","size":"XS","cat":"Frame \u2022 Pillow"},{"id":"1107-1033678","name":"Headgear ComfortGel Blue Nasal Std","family":"","size":"Std","cat":"Headgear"},{"id":"1107-64216","name":"Headgear Airfit N30","family":"AirFit N30","size":"","cat":"Headgear"},{"id":"1107-63814","name":"Headgear Airfit N30i / P30i","family":"AirFit N30i","size":"","cat":"Headgear"},{"id":"1107-63562","name":"Headgear Airfit N20 Lrg","family":"Airfit N20","size":"L","cat":"Headgear"},{"id":"1107-63561","name":"Headgear Airfit N20 Med","family":"Airfit N20","size":"M","cat":"Headgear"},{"id":"1107-63560","name":"Headgear Airfit N20 Sml (Blue)","family":"Airfit N20","size":"S","cat":"Headgear"},{"id":"1107-63558","name":"Headgear Airfit N20 Sml (Pink)","family":"Airfit N20","size":"S","cat":"Headgear"},{"id":"1107-62935","name":"Headgear Airfit P10","family":"Airfit P10","size":"","cat":"Headgear"},{"id":"1107-62936","name":"Headgear Airfit P10 Her","family":"Airfit P10","size":"","cat":"Headgear"},{"id":"1107-1090296","name":"Headgear Amara Gel Sml","family":"Amara Gel","size":"S","cat":"Headgear"},{"id":"1107-1090297","name":"Headgear Amara Gel Std","family":"Amara Gel","size":"Std","cat":"Headgear"},{"id":"1107-1090696","name":"Headgear Amara View Headgear Lrg","family":"Amara View","size":"L","cat":"Headgear"},{"id":"1107-1090697","name":"Headgear Amara View Headgear Std","family":"Amara View","size":"Std","cat":"Headgear"},{"id":"1107-400BRE120","name":"Headgear Brevida","family":"Brevida","size":"","cat":"Headgear"},{"id":"1107-1137965","name":"Headgear DreamWisp Lrg","family":"DreamWisp","size":"L","cat":"Headgear"},{"id":"1107-1137966","name":"Headgear DreamWisp Sml","family":"DreamWisp","size":"S","cat":"Headgear"},{"id":"1107-1137964","name":"Headgear DreamWisp Std","family":"DreamWisp","size":"MW (Med-Wide)","cat":"Headgear"},{"id":"1107-1133450","name":"Headgear Dreamwear Full Face","family":"Dreamwear","size":"MW (Med-Wide)","cat":"Headgear"},{"id":"1107-1116751","name":"Headgear Dreamwear Nasal with Arms","family":"Dreamwear","size":"MW (Med-Wide)","cat":"Headgear"},{"id":"1107-400HC568","name":"Headgear Eson Med/Lrg","family":"Eson","size":"M","cat":"Headgear"},{"id":"1107-400HC567","name":"Headgear Eson Sml","family":"Eson","size":"S","cat":"Headgear"},{"id":"1107-400ESN222","name":"Headgear Eson2 Med/Lrg","family":"Eson2","size":"M","cat":"Headgear"},{"id":"1107-400ESN221","name":"Headgear Eson2 Sml","family":"Eson2","size":"S","cat":"Headgear"},{"id":"1107-400EVF121","name":"Headgear Evora FFM Std","family":"Evora","size":"Std","cat":"Headgear"},{"id":"1107-400EVF122","name":"Headgear Evora FFM X-Lrg","family":"Evora","size":"L","cat":"Headgear"},{"id":"1107-400EVO121","name":"Headgear Nasal Evora","family":"Evora","size":"","cat":"Headgear"},{"id":"1107-63164","name":"Headgear Airfit F10","family":"F10","size":"","cat":"Headgear"},{"id":"1107-63167","name":"Headgear Airfit F10 Her","family":"F10","size":"","cat":"Headgear"},{"id":"1107-63166","name":"Headgear Airfit F10 Lrg","family":"F10","size":"L","cat":"Headgear"},{"id":"1107-63165","name":"Headgear Airfit F10 Sml","family":"F10","size":"S","cat":"Headgear"},{"id":"1107-63472","name":"Headgear F20 Lrg","family":"F20","size":"L","cat":"Headgear"},{"id":"1107-63470","name":"Headgear F20 Sml","family":"F20","size":"S","cat":"Headgear"},{"id":"1107-63471","name":"Headgear F20 Std","family":"F20","size":"Std","cat":"Headgear"},{"id":"1107-63473","name":"Headgear F20 for Her Sml","family":"F20","size":"S","cat":"Headgear"},{"id":"1107-FF20HDGR","name":"Headgear fits F20 Std","family":"F20","size":"Std","cat":"Headgear"},{"id":"1107-63372","name":"Headgear F30i Std","family":"F30i","size":"Std","cat":"Headgear"},{"id":"1107-64635","name":"Headgear F40 Lge","family":"F40","size":"","cat":"Headgear"},{"id":"1107-64633","name":"Headgear F40 Sml","family":"F40","size":"S","cat":"Headgear"},{"id":"1107-64634","name":"Headgear F40 Std","family":"F40","size":"Std","cat":"Headgear"},{"id":"1107-1060808","name":"Headgear FitLife Lrg","family":"FitLife","size":"L","cat":"Headgear"},{"id":"1107-1060807","name":"Headgear FitLife Sml","family":"FitLife","size":"S","cat":"Headgear"},{"id":"1107-1089990","name":"Headgear FitLife X-Lrg","family":"FitLife","size":"L","cat":"Headgear"},{"id":"1107-62110","name":"Headgear Mirage FX","family":"Mirage FX","size":"","cat":"Headgear"},{"id":"1107-62129","name":"Headgear Mirage FX Her","family":"Mirage FX","size":"","cat":"Headgear"},{"id":"1107-FN20HDGR","name":"Headgear fits N20 Med","family":"N20","size":"M","cat":"Headgear"},{"id":"1107-400NVP122","name":"Headgear Nova Micro","family":"Nova Micro","size":"","cat":"Headgear"},{"id":"1107-1146407","name":"Headgear Pico Sml","family":"Pico","size":"S","cat":"Headgear"},{"id":"1107-1104934","name":"Headgear Pico Std","family":"Pico","size":"Std","cat":"Headgear"},{"id":"1107-400HC328","name":"Headgear Pilairo Std","family":"Pilairo","size":"Std","cat":"Headgear"},{"id":"1107-16119","name":"Headgear Quattro/ Activa/ LT/ Ultra/SofGel Lrg","family":"Quattro","size":"L","cat":"Headgear"},{"id":"1107-16118","name":"Headgear Quattro/ Activa/ LT/ Ultra/SoftGel Sml","family":"Quattro","size":"S","cat":"Headgear"},{"id":"1107-62758","name":"Headgear Quattro Air Her Sml","family":"Quattro Air","size":"S","cat":"Headgear"},{"id":"1107-62759","name":"Headgear Quattro Air Her Std","family":"Quattro Air","size":"Std","cat":"Headgear"},{"id":"1107-62757","name":"Headgear Quattro Air Sml","family":"Quattro Air","size":"S","cat":"Headgear"},{"id":"1107-62756","name":"Headgear Quattro Air Std","family":"Quattro Air","size":"Std","cat":"Headgear"},{"id":"1107-62507","name":"Headgear Quattro FX Her","family":"Quattro FX","size":"","cat":"Headgear"},{"id":"1107-62506","name":"Headgear Quattro FX Her Sml","family":"Quattro FX","size":"S","cat":"Headgear"},{"id":"1107-61738","name":"Headgear Quattro FX Lrg","family":"Quattro FX","size":"L","cat":"Headgear"},{"id":"1107-61733","name":"Headgear Quattro FX Med","family":"Quattro FX","size":"M","cat":"Headgear"},{"id":"1107-61734","name":"Headgear Quattro FX Sml","family":"Quattro FX","size":"S","cat":"Headgear"},{"id":"1107-400HC583","name":"Headgear Simplus Med / Lrg","family":"Simplus","size":"M","cat":"Headgear"},{"id":"1107-400HC582","name":"Headgear Simplus Sml","family":"Simplus","size":"S","cat":"Headgear"},{"id":"1107-400SL122","name":"Headgear Solo","family":"Solo","size":"","cat":"Headgear"},{"id":"1107-61582","name":"Headgear Swift FX Bella Loop Gray","family":"Swift FX","size":"","cat":"Headgear"},{"id":"1107-61581","name":"Headgear Swift FX Bella Loop Her Pink","family":"Swift FX","size":"","cat":"Headgear"},{"id":"1107-61529","name":"Headgear Swift FX Gray","family":"Swift FX","size":"","cat":"Headgear"},{"id":"1107-61543","name":"Headgear Swift FX Her Pink","family":"Swift FX","size":"","cat":"Headgear"},{"id":"1107-400VIT122","name":"Headgear Vitera Med/Lrg","family":"Vitera","size":"M","cat":"Headgear"},{"id":"1107-400VIT121","name":"Headgear Vitera Sml","family":"Vitera","size":"S","cat":"Headgear"},{"id":"1107-1094078","name":"Headgear Wisp Lrg","family":"Wisp","size":"L","cat":"Headgear"},{"id":"1107-1104973","name":"Headgear Wisp Pediatric","family":"Wisp","size":"","cat":"Headgear"},{"id":"1107-1109307","name":"Headgear Wisp Sml","family":"Wisp","size":"S","cat":"Headgear"},{"id":"1107-1094082","name":"Headgear Wisp Std","family":"Wisp","size":"Std","cat":"Headgear"},{"id":"1108-1136502","name":"Humidifier Water Chamber Repl PR1 60 Series","family":"","size":"","cat":"Humidifier \u2022 Water Chamber"},{"id":"1108-HC325S","name":"Humidifier Water Chamber Repl for HC150/MR810","family":"","size":"","cat":"Humidifier \u2022 Water Chamber"},{"id":"1108-MR325","name":"Humidifier Water Chamber Repl for my820","family":"","size":"","cat":"Humidifier \u2022 Water Chamber"},{"id":"1108-37299","name":"Humidifier Water Chamber Repl A10","family":"A10","size":"","cat":"Humidifier \u2022 Water Chamber"},{"id":"1108-39100","name":"Humidifier Water Chamber Repl A11","family":"A11","size":"","cat":"Humidifier \u2022 Water Chamber"},{"id":"1108-1122520","name":"Humidifier Water Chamber Repl DreamStation","family":"DreamStation","size":"","cat":"Humidifier \u2022 Water Chamber"},{"id":"1108-1142832","name":"Humidifier Water Chamber Repl DreamStation 2","family":"DreamStation 2","size":"","cat":"Humidifier \u2022 Water Chamber"},{"id":"1108-900ICON200","name":"Humidifier Water Chamber Repl 900ICON200","family":"ICON","size":"","cat":"Humidifier \u2022 Water Chamber"},{"id":"1108-H2OReplLunaII","name":"Humidifier Water Chamber Repl Luna II","family":"Luna II","size":"","cat":"Humidifier \u2022 Water Chamber"},{"id":"1108-26958","name":"Humidifier Water Chamber Repl S8","family":"S8","size":"","cat":"Humidifier \u2022 Water Chamber"},{"id":"1108-36803","name":"Humidifier Water Chamber Repl S9","family":"S9","size":"","cat":"Humidifier \u2022 Water Chamber"},{"id":"B-H2O Chamber-A7046","name":"PAP Heated Humidifier Chamber Repl","family":"","size":"","cat":"PAP \u2022 Humidifier Accessory"},{"id":"0908-PT100US","name":"PAP Heated Humidifier myAIRVO 2 w/ Flow Generator","family":"","size":"","cat":"PAP \u2022 Humidifier Accessory"},{"id":"G-HumidifierChamber","name":"PAP Humidifier Chamber","family":"","size":"","cat":"PAP \u2022 Humidifier Accessory"},{"id":"B-Humidifier-E0562","name":"PAP Humidifier Heated","family":"","size":"","cat":"PAP \u2022 Humidifier Accessory"},{"id":"0908-900MR869","name":"PAP Humidifier Heated Temp Probe fits HC550","family":"","size":"","cat":"PAP \u2022 Humidifier Accessory"},{"id":"1115-BPSFD.1.KIT","name":"PAP Battery Single Kit","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"A7038 - HPSM","name":"PAP Filter Disposable","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"G-Filter-Disposable","name":"PAP Filter Disposable","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"G-Filter-Reusable","name":"PAP Filter Reusable","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"A7031 - HPSM","name":"PAP Fullface Insert","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"G-Headgear","name":"PAP Headgear","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"G-0908-E0562","name":"PAP Humidifer Heated","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"G-Mask-CUSH-FullFace","name":"PAP Mask Cushion FullFace","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"A7032 - HPSM","name":"PAP Mask Cushion Nasal","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"G-Mask-CUSH-Nasal","name":"PAP Mask Cushion Nasal","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"A7033 - HPSM","name":"PAP Mask Cushion Pillow","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"G-Mask-CUSH-Pillow","name":"PAP Mask Cushion Pillow","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"B-1109-A7030","name":"PAP Mask Frame FullFace","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"G-Mask-FRM-FullFace","name":"PAP Mask Frame FullFace","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"G-Mask-FRM-NSL/PLW","name":"PAP Mask Frame NSL/PLW","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"B-1110-A7034","name":"PAP Mask Frame Nasal","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"G-Tubing-HTD","name":"PAP Tubing Heated","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"G-Tubing-NHTD","name":"PAP Tubing Standard Non-Heated","family":"","size":"","cat":"PAP \u2022 Misc"},{"id":"1112-100200C(sn)","name":"PAP Compliance Monitoring PR1 Cell Modem","family":"","size":"","cat":"PAP \u2022 Monitoring/Telem"},{"id":"G-1112-A9279","name":"PAP Device Compliance Monitoring Device","family":"","size":"","cat":"PAP \u2022 Monitoring/Telem"},{"id":"B-1112-A9279","name":"PAP Device Compliance Monitoring Feature","family":"","size":"","cat":"PAP \u2022 Monitoring/Telem"},{"id":"1112-39228","name":"PAP Monitoring Data Card Air Series A10/11","family":"A10","size":"","cat":"PAP \u2022 Monitoring/Telem"},{"id":"1112-39229","name":"PAP Monitoring Data Card Air Series A10/11 - 10Pk","family":"A10","size":"","cat":"PAP \u2022 Monitoring/Telem"},{"id":"1112-100600C","name":"PAP Compliance Monitoring Dreamstation Cell Modem","family":"DreamStation","size":"","cat":"PAP \u2022 Monitoring/Telem"},{"id":"1112-1063859-10Pk","name":"PAP Monitoring Data Card Trilogy DreamStation","family":"DreamStation","size":"","cat":"PAP \u2022 Monitoring/Telem"},{"id":"1112-1063859-EA","name":"PAP Monitoring Data Card Trilogy DreamStation","family":"DreamStation","size":"","cat":"PAP \u2022 Monitoring/Telem"},{"id":"1115-503026","name":"Transcend 3 miniCPAP P4 Single-Night Battery","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-503023","name":"Transcend 3 miniCPAP P8 Multi-Night Battery","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-503056","name":"Transcend 3 miniCPAP Solar Charger","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-503096","name":"Transcend 365 miniCPAP Air Inlet Filter","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-503109","name":"Transcend 365 miniCPAP Filter Assembly","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-503111","name":"Transcend 365 miniCPAP Heater Wick - 6 Pack","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-503097","name":"Transcend 365 miniCPAP Heater Wick w/ Cover","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-503110","name":"Transcend 365 miniCPAP Portable Water Filter Kit","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-999001","name":"Transcend 365 miniCPAP Slim 6' Hose","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-503100","name":"Transcend 365 miniCPAP Universal AC Power Supply","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-503093","name":"Transcend 365 miniCPAP Water Reservoir","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-503120","name":"Transcend Air Flex 6 CPAP Hose","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-503023-W","name":"Transcend Micro P8 Multi-Night Battery","family":"","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1105-1133744","name":"DreamStation Go Disposable 30-day Filter - 6 Pack","family":"DreamStation","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"0908-DSGH","name":"DreamStation Go Heated Humidifier","family":"DreamStation","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1105-1133743","name":"DreamStation Go Reusable Pollen Filters - 2 Pack","family":"DreamStation","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1115-503098","name":"Transcend 365 minicPAP P10 Battery","family":"P10","size":"","cat":"Travel CPAP \u2022 Accessory"},{"id":"1113-37357","name":"Tubing Heated ClimateLineAir (FOR OXYGEN USE ONLY)","family":"","size":"","cat":"Tubing \u2022 Heated"},{"id":"1113-900HC522","name":"Tubing Heated Thermosmart Tube for HC600 Series","family":"","size":"","cat":"Tubing \u2022 Heated"},{"id":"B-1113-A4604","name":"Tubing Heated for PAP Device","family":"","size":"","cat":"Tubing \u2022 Heated"},{"id":"1113-37298","name":"Tubing Heated ClimateLineAir Resmed A10","family":"A10","size":"M","cat":"Tubing \u2022 Heated"},{"id":"1113-39102","name":"Tubing Heated ClimateLineAir Resmed A11","family":"A11","size":"M","cat":"Tubing \u2022 Heated"},{"id":"1113-HT15","name":"Tubing Heated DreamStation (1&2) - 6'","family":"DreamStation","size":"","cat":"Tubing \u2022 Heated"},{"id":"1113-TubeHtdLunaII","name":"Tubing Heated Luna II","family":"Luna II","size":"","cat":"Tubing \u2022 Heated"},{"id":"1113-TubeHtdLunaIIG2","name":"Tubing Heated Luna II Kit G2","family":"Luna II","size":"","cat":"Tubing \u2022 Heated"},{"id":"1113-36995","name":"Tubing Heated ClimateLine Resmed S9","family":"S9","size":"M","cat":"Tubing \u2022 Heated"},{"id":"1115-CAP4003C","name":"CPAPMax Pillow Case (pillow sold separately)","family":"","size":"","cat":"Uncategorized"},{"id":"1115-CAP4003","name":"CPAPMax Pillow without Case","family":"","size":"","cat":"Uncategorized"},{"id":"K-1110-1070037","name":"ComfortGel Blue Nasal Mask w/ Hgr - Lrg","family":"","size":"L","cat":"Uncategorized"},{"id":"K-1110-1070038","name":"ComfortGel Blue Nasal Mask w/ Hgr - Med","family":"","size":"M","cat":"Uncategorized"},{"id":"K-1110-1070040","name":"ComfortGel Blue Nasal Mask w/ Hgr - Ptt","family":"","size":"Petite","cat":"Uncategorized"},{"id":"K-1110-1070039","name":"ComfortGel Blue Nasal Mask w/ Hgr - Sml","family":"","size":"S","cat":"Uncategorized"},{"id":"1116-30333909","name":"Nasopharyngeal Airway 138 mm x 30 Fr.","family":"","size":"","cat":"Uncategorized"},{"id":"B-Headgear-A7035","name":"Pos airway press headgear","family":"","size":"","cat":"Uncategorized"},{"id":"G-AirMini Setup Pack","name":"Setup Pack for the Resmed AirMini","family":"","size":"M","cat":"Uncategorized"},{"id":"BK-1109-A7030","name":"Standard Full Face Mask Kit","family":"","size":"","cat":"Uncategorized"},{"id":"BK-1110-A7034 C","name":"Standard Nasal Cushion Mask Kit","family":"","size":"","cat":"Uncategorized"},{"id":"BK-1111-A7034 P","name":"Standard Nasal Pillow Mask Kit","family":"","size":"","cat":"Uncategorized"},{"id":"B-1114-A7037","name":"Tubing PAP/Vent Std 6'","family":"","size":"Std","cat":"Uncategorized"},{"id":"1105-FilterZ1Z2","name":"Z1 & Z2 CPAP Disposable Filter (2 Pack)","family":"","size":"","cat":"Uncategorized"},{"id":"K-1110-64223","name":"Airfit N30 Nasal Mask w/ Hgr - Med","family":"AirFit N30","size":"M","cat":"Uncategorized"},{"id":"K-1110-64222","name":"Airfit N30 Nasal Mask w/ Hgr - Sml","family":"AirFit N30","size":"S","cat":"Uncategorized"},{"id":"K-1110-64224","name":"Airfit N30 Nasal Mask w/ Hgr - Sml Wd","family":"AirFit N30","size":"S/Wide","cat":"Uncategorized"},{"id":"K-1110-63801","name":"Airfit N30i Nasal Mask w/ Hgr - Fitpack /Sml Frame","family":"AirFit N30i","size":"S","cat":"Uncategorized"},{"id":"K-1110-63800","name":"Airfit N30i Nasal Mask w/ Hgr - Fitpack /Std Frame","family":"AirFit N30i","size":"Std","cat":"Uncategorized"},{"id":"K-1110-63902","name":"AirTouch N20 Nasal Mask w/ Hgr - Lrg","family":"AirTouch N20","size":"L","cat":"Uncategorized"},{"id":"K-1110-63901","name":"AirTouch N20 Nasal Mask w/ Hgr - Med","family":"AirTouch N20","size":"M","cat":"Uncategorized"},{"id":"K-1110-63903","name":"AirTouch N20 Nasal Mask w/ Hgr - Sml","family":"AirTouch N20","size":"S","cat":"Uncategorized"},{"id":"K-1110-63900","name":"AirTouch N20 for Her Nasal Mask w/ Hgr - Sml","family":"AirTouch N20","size":"S","cat":"Uncategorized"},{"id":"K-1110-62301","name":"AirTouch N30i Nasal Mask w/ Hgr-Fitpack/Sml Frame","family":"AirTouch N30i","size":"S","cat":"Uncategorized"},{"id":"K-1110-62300","name":"AirTouch N30i Nasal Mask w/ Hgr-Fitpack/Std Frame","family":"AirTouch N30i","size":"Std","cat":"Uncategorized"},{"id":"K-1110-62315","name":"AirTouch N30i Nasal Mask w/ Hgr-Lrg Cush/Sml Frame","family":"AirTouch N30i","size":"S","cat":"Uncategorized"},{"id":"K-1110-62312","name":"AirTouch N30i Nasal Mask w/ Hgr-Lrg Cush/Std Frame","family":"AirTouch N30i","size":"L","cat":"Uncategorized"},{"id":"K-1110-62314","name":"AirTouch N30i Nasal Mask w/ Hgr-Med Cush/Sml Frame","family":"AirTouch N30i","size":"S","cat":"Uncategorized"},{"id":"K-1110-62311","name":"AirTouch N30i Nasal Mask w/ Hgr-Med Cush/Std Frame","family":"AirTouch N30i","size":"M","cat":"Uncategorized"},{"id":"K-1110-62313","name":"AirTouch N30i Nasal Mask w/ Hgr-SW Cush/Sml Frame","family":"AirTouch N30i","size":"S","cat":"Uncategorized"},{"id":"K-1110-62310","name":"AirTouch N30i Nasal Mask w/ Hgr-SW Cush/Std Frame","family":"AirTouch N30i","size":"Std","cat":"Uncategorized"},{"id":"K-1110-63502","name":"Airfit N20 Nasal Mask w/ Hgr - Lrg","family":"Airfit N20","size":"L","cat":"Uncategorized"},{"id":"K-1110-63501","name":"Airfit N20 Nasal Mask w/ Hgr - Med","family":"Airfit N20","size":"M","cat":"Uncategorized"},{"id":"K-1110-63503","name":"Airfit N20 Nasal Mask w/ Hgr - Sml","family":"Airfit N20","size":"S","cat":"Uncategorized"},{"id":"K-1110-63500","name":"Airfit N20 for Her Nasal Mask w/ Hgr - Sml","family":"Airfit N20","size":"S","cat":"Uncategorized"},{"id":"K-1111-62900","name":"Airfit P10 Pillow Mask w/ Hgr - Sml, Med, Lrg","family":"Airfit P10","size":"S","cat":"Uncategorized"},{"id":"K-1111-62910","name":"Airfit P10 for Her Pillow Mask w/ Hgr - X-Sml, Sml","family":"Airfit P10","size":"XS","cat":"Uncategorized"},{"id":"K-1111-63850","name":"Airfit P30i Pillow Mask w/ Hgr - Std Frame Fitpack","family":"Airfit P30i","size":"Std","cat":"Uncategorized"},{"id":"K-1109-1090406","name":"Amara Gel FullFace Mask w/ Hgr - Lrg","family":"Amara Gel","size":"L","cat":"Uncategorized"},{"id":"K-1109-1090405","name":"Amara Gel FullFace Mask w/ Hgr - Med","family":"Amara Gel","size":"M","cat":"Uncategorized"},{"id":"K-1109-1090400","name":"Amara Gel FullFace Mask w/ Hgr - Ptt","family":"Amara Gel","size":"Petite","cat":"Uncategorized"},{"id":"K-1109-1090401","name":"Amara Gel FullFace Mask w/ Hgr - Sml","family":"Amara Gel","size":"S","cat":"Uncategorized"},{"id":"K-1109-1090670","name":"Amara View FullFace Mask w/ Hgr - Fitpack","family":"Amara View","size":"","cat":"Uncategorized"},{"id":"K-1109-1090624","name":"Amara View FullFace Mask w/ Hgr - Lrg","family":"Amara View","size":"L","cat":"Uncategorized"},{"id":"K-1109-1090623","name":"Amara View FullFace Mask w/ Hgr - Med","family":"Amara View","size":"M","cat":"Uncategorized"},{"id":"K-1109-1090622","name":"Amara View FullFace Mask w/ Hgr - Sml","family":"Amara View","size":"S","cat":"Uncategorized"},{"id":"K-1110-BRE1SMA","name":"Brevida Pillow Mask w/ Hgr - Fitpack","family":"Brevida","size":"","cat":"Uncategorized"},{"id":"1115-400BRE161","name":"Washable Diffuser for F&P Brevida","family":"Brevida","size":"","cat":"Uncategorized"},{"id":"K-1110-1137916","name":"DreamWisp Nasal Mask w/ Hgr- Fitpack Sml, Med, Lrg","family":"DreamWisp","size":"S","cat":"Uncategorized"},{"id":"K-1109-1133382","name":"DreamWear FFM w/ Hgr - Lrg Cush / Med Frame","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1109-1133381","name":"DreamWear FFM w/ Hgr - Med Cush / Med Frame","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1109-1133386","name":"DreamWear FFM w/ Hgr - Med Cush / Sml Frame","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1109-1133383","name":"DreamWear FFM w/ Hgr - Med Wd Cush / Med Frame","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1109-1133380","name":"DreamWear FFM w/ Hgr - Sml Cush / Med Frame","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1109-1133385","name":"DreamWear FFM w/ Hgr - Sml Cush / Sml Frame","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1116700","name":"DreamWear Nasal Mask w/ Hgr - Fitpack on Med Frame","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1110-1116692","name":"DreamWear Nasal Mask w/ Hgr - Lrg Cush / Lrg Frame","family":"Dreamwear","size":"L","cat":"Uncategorized"},{"id":"K-1110-1116682","name":"DreamWear Nasal Mask w/ Hgr - Lrg Cush / Med Frame","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1110-1116687","name":"DreamWear Nasal Mask w/ Hgr - Lrg Cush / Sml Frame","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1116693","name":"DreamWear Nasal Mask w/ Hgr - M-Wd Cush / Lrg Fram","family":"Dreamwear","size":"L","cat":"Uncategorized"},{"id":"K-1110-1116683","name":"DreamWear Nasal Mask w/ Hgr - M-Wd Cush / Med Fram","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1110-1116688","name":"DreamWear Nasal Mask w/ Hgr - M-Wd Cush / Sml Fram","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1116691","name":"DreamWear Nasal Mask w/ Hgr - Med Cush / Lrg Fram","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1110-1116681","name":"DreamWear Nasal Mask w/ Hgr - Med Cush / Med Frame","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1110-1116686","name":"DreamWear Nasal Mask w/ Hgr - Med Cush / Sml Fram","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1116690","name":"DreamWear Nasal Mask w/ Hgr - Sml Cush / Lrg Fram","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1116680","name":"DreamWear Nasal Mask w/ Hgr - Sml Cush / Med Frame","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1116685","name":"DreamWear Nasal Mask w/ Hgr - Sml Cush / Sml Fram","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1146451","name":"DreamWear Pillow Mask w/ Hgr - MW Plw / Lrg Frame","family":"Dreamwear","size":"L","cat":"Uncategorized"},{"id":"K-1110-1146417","name":"DreamWear Pillow Mask w/ Hgr - MW Plw / Med Frame","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1110-1146413","name":"DreamWear Pillow Mask w/ Hgr - MW Plw / Sml Frame","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1146450","name":"DreamWear Pillow Mask w/ Hgr -Lrg Plw / Lrg Frame","family":"Dreamwear","size":"L","cat":"Uncategorized"},{"id":"K-1110-1146416","name":"DreamWear Pillow Mask w/ Hgr -Lrg Plw / Med Frame","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1110-1146412","name":"DreamWear Pillow Mask w/ Hgr -Lrg Plw / Sml Frame","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1146449","name":"DreamWear Pillow Mask w/ Hgr -Med Plw / Lrg Frame","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1110-1146415","name":"DreamWear Pillow Mask w/ Hgr -Med Plw / Med Frame","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1110-1146411","name":"DreamWear Pillow Mask w/ Hgr -Med Plw / Sml Frame","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1146448","name":"DreamWear Pillow Mask w/ Hgr -Sml Plw / Lrg Frame","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1146414","name":"DreamWear Pillow Mask w/ Hgr -Sml Plw / Med Frame","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1146410","name":"DreamWear Pillow Mask w/ Hgr -Sml Plw / Sml Frame","family":"Dreamwear","size":"S","cat":"Uncategorized"},{"id":"K-1110-1146468","name":"DreamWear Pillow Mask w/ Hgr- Fitpack on Med Frame","family":"Dreamwear","size":"M","cat":"Uncategorized"},{"id":"K-1110-400451","name":"Eson Nasal Mask w/ Hgr - Lrg","family":"Eson","size":"L","cat":"Uncategorized"},{"id":"K-1110-400450","name":"Eson Nasal Mask w/ Hgr - Med","family":"Eson","size":"M","cat":"Uncategorized"},{"id":"K-1110-400449","name":"Eson Nasal Mask w/ Hgr - Sml","family":"Eson","size":"S","cat":"Uncategorized"},{"id":"K-1110-ESN2SML","name":"Eson2 Nasal Mask w/ Hgr - Fitpack","family":"Eson2","size":"","cat":"Uncategorized"},{"id":"K-1110-ESN2LA","name":"Eson2 Nasal Mask w/ Hgr - Lrg","family":"Eson2","size":"L","cat":"Uncategorized"},{"id":"K-1110-ESN2MA","name":"Eson2 Nasal Mask w/ Hgr - Med","family":"Eson2","size":"M","cat":"Uncategorized"},{"id":"K-1110-ESN2SA","name":"Eson2 Nasal Mask w/ Hgr - Sml","family":"Eson2","size":"S","cat":"Uncategorized"},{"id":"K-1109-EVF1XMLA","name":"Evora FullFace Mask w/ Hgr - Fitpack","family":"Evora","size":"","cat":"Uncategorized"},{"id":"K-1110-EVO1SMLA","name":"Evora Nasal Mask w/ Hgr - Fitpack","family":"Evora","size":"","cat":"Uncategorized"},{"id":"K-1110-EVO1LA","name":"Evora Nasal Mask w/ Hgr - Lrg","family":"Evora","size":"L","cat":"Uncategorized"},{"id":"K-1110-EVO1MA","name":"Evora Nasal Mask w/ Hgr - Med","family":"Evora","size":"M","cat":"Uncategorized"},{"id":"K-1110-EVO1SA","name":"Evora Nasal Mask w/ Hgr - Sml","family":"Evora","size":"S","cat":"Uncategorized"},{"id":"K-1110-EVO1WA","name":"Evora Nasal Mask w/ Hgr - Wd","family":"Evora","size":"Wide","cat":"Uncategorized"},{"id":"K-1109-64604","name":"Airfit F40 FullFace Mask w/ Hgr - Med Cush/Lrg Fr","family":"F40","size":"M","cat":"Uncategorized"},{"id":"K-1109-1060802","name":"FitLife FullFace Mask w/ Hgr - Lrg","family":"FitLife","size":"L","cat":"Uncategorized"},{"id":"K-1109-1060801","name":"FitLife FullFace Mask w/ Hgr - Sml","family":"FitLife","size":"S","cat":"Uncategorized"},{"id":"K-1109-1089991","name":"FitLife FullFace Mask w/ Hgr - X-Lrg","family":"FitLife","size":"L","cat":"Uncategorized"},{"id":"K-1110-62103","name":"Mirage FX Nasal Mask w/ Hgr - Std","family":"Mirage FX","size":"Std","cat":"Uncategorized"},{"id":"K-1110-62118","name":"Mirage FX Nasal Mask w/ Hgr - Wd","family":"Mirage FX","size":"Wide","cat":"Uncategorized"},{"id":"K-1110-62109","name":"Mirage FX for Her Nasal Mask w/ Hgr - Sml","family":"Mirage FX","size":"S","cat":"Uncategorized"},{"id":"K-1110-62128","name":"Mirage FX for Her Nasal Mask w/ Hgr - Std","family":"Mirage FX","size":"Std","cat":"Uncategorized"},{"id":"K-1110-NVP1SMLA","name":"Nova Micro Pillow Mask w/ Hgr - Fitpack","family":"Nova Micro","size":"","cat":"Uncategorized"},{"id":"K-1110-NVP1LA","name":"Nova Micro Pillow Mask w/ Hgr - Lrg","family":"Nova Micro","size":"L","cat":"Uncategorized"},{"id":"K-1110-NVP1MA","name":"Nova Micro Pillow Mask w/ Hgr - Med","family":"Nova Micro","size":"M","cat":"Uncategorized"},{"id":"K-1110-NVP1SA","name":"Nova Micro Pillow Mask w/ Hgr - Sml","family":"Nova Micro","size":"S","cat":"Uncategorized"},{"id":"K-1110-1104940","name":"Pico Nasal Mask Fitpack w/ Hgr - S/M, L, XL","family":"Pico","size":"","cat":"Uncategorized"},{"id":"K-1110-400421","name":"Pilairo Q Pillow Mask w/ Hgr - One Size","family":"Pilairo","size":"One Size","cat":"Uncategorized"},{"id":"K-1110-SLN1SMLA","name":"Solo Nasal Mask w/ Hgr - Fitpack","family":"Solo","size":"","cat":"Uncategorized"},{"id":"K-1110-SLN1LA","name":"Solo Nasal Mask w/ Hgr - Lrg","family":"Solo","size":"L","cat":"Uncategorized"},{"id":"K-1110-SLN1MA","name":"Solo Nasal Mask w/ Hgr - Med","family":"Solo","size":"M","cat":"Uncategorized"},{"id":"K-1110-SLN1SA","name":"Solo Nasal Mask w/ Hgr - Sml","family":"Solo","size":"S","cat":"Uncategorized"},{"id":"K-1110-SLN1WA","name":"Solo Nasal Mask w/ Hgr - Wd","family":"Solo","size":"Wide","cat":"Uncategorized"},{"id":"K-1110-SLP1SMLA","name":"Solo Pillow Mask w/ Hgr - Fitpack","family":"Solo","size":"","cat":"Uncategorized"},{"id":"K-1110-SLP1LA","name":"Solo Pillow Mask w/ Hgr - Lrg","family":"Solo","size":"L","cat":"Uncategorized"},{"id":"K-1110-SLP1MA","name":"Solo Pillow Mask w/ Hgr - Med","family":"Solo","size":"M","cat":"Uncategorized"},{"id":"K-1110-SLP1SA","name":"Solo Pillow Mask w/ Hgr - Sml","family":"Solo","size":"S","cat":"Uncategorized"},{"id":"K-1111-61568","name":"Swift FX Bella Gray Pillow Mask w/ Hgr - Sml, Med,","family":"Swift FX","size":"S","cat":"Uncategorized"},{"id":"K-1111-61560","name":"Swift FX Bella Pink Pillow Mask w/ Hgr - X-Sml, Sm","family":"Swift FX","size":"XS","cat":"Uncategorized"},{"id":"K-1111-61500","name":"Swift FX Pillow Mask w/ Hgr - Sml, Med, Lrg","family":"Swift FX","size":"S","cat":"Uncategorized"},{"id":"K-1111-61540","name":"Swift FX for Her Pillow Mask w/ Hgr - X-Sml, Sml,","family":"Swift FX","size":"XS","cat":"Uncategorized"},{"id":"K-1109-VIT1SMLA","name":"Vitera FullFace Mask w/ Hgr - Fitpack","family":"Vitera","size":"","cat":"Uncategorized"},{"id":"K-1109-VIT1LA","name":"Vitera FullFace Mask w/ Hgr - Lrg","family":"Vitera","size":"L","cat":"Uncategorized"},{"id":"K-1109-VIT1MA","name":"Vitera FullFace Mask w/ Hgr - Med","family":"Vitera","size":"M","cat":"Uncategorized"},{"id":"K-1109-VIT1SA","name":"Vitera FullFace Mask w/ Hgr - Sml","family":"Vitera","size":"S","cat":"Uncategorized"},{"id":"K-1110-1094050","name":"Wisp Clear Nasal Mask w/ Hgr - Sml/Med, Lrg, X-Lrg","family":"Wisp","size":"S","cat":"Uncategorized"},{"id":"K-1110-1094051","name":"Wisp Fabric Nasal Mask w/ Hgr - Sml/Med, Lrg, X-Lr","family":"Wisp","size":"S","cat":"Uncategorized"},{"id":"K-1110-1104953","name":"Wisp Nasal Mask Pediatric w/ Hgr - Fitpack","family":"Wisp","size":"","cat":"Uncategorized"},{"id":"1114-005997","name":"Z2 CPAP Q-Tube Noise Cancellation Muffler","family":"","size":"","cat":""},{"id":"1114-1128074","name":"DreamStation Go Tubing Mask Adaptor","family":"","size":"","cat":""},{"id":"1114-36810","name":"Tubing PAP/Vent Slimline Universal 6'","family":"","size":"","cat":""},{"id":"1114-38822","name":"AirMini Tubing Standard","family":"","size":"","cat":""},{"id":"1114-HD60-2010","name":"Z1 & Z2 CPAP Tubing SlimStyle 4'","family":"","size":"","cat":""},{"id":"1114-HD60-2020","name":"Z1 & Z2 CPAP Tubing SlimStyle 6'","family":"","size":"","cat":""},{"id":"1114-PR12","name":"DreamStation Go Tubing Micro-Flexible 12mm","family":"","size":"","cat":""},{"id":"1114-PR15","name":"Tubing Standard DreamStation 1/2 6'","family":"","size":"","cat":""},{"id":"1114-TUB0018","name":"Tubing PAP/Vent 18\" - Gray","family":"","size":"","cat":""},{"id":"1114-TUB006SS","name":"Tubing PAP/Vent Slimline Universal 6'","family":"","size":"","cat":""},{"id":"1114-TUB010","name":"Tubing PAP/Vent Std 10'","family":"","size":"","cat":""},{"id":"1114-TUB06","name":"Tubing PAP/Vent Std 6'","family":"","size":"","cat":""},{"id":"1114-TUB08","name":"Tubing PAP/Vent Std 8'","family":"","size":"","cat":""},{"id":"1115-1028869","name":"Battery Pack Respironics","family":"","size":"","cat":""},{"id":"1115-1063857","name":"Bag For BPAP PR1","family":"","size":"","cat":""},{"id":"1115-1116754","name":"Wraps Fabric Dreamwear","family":"","size":"","cat":""},{"id":"1115-1124009","name":"Battery CPAP Respironics fits DSX and PR1","family":"","size":"","cat":""},{"id":"1115-1132551","name":"DreamStation Go Power Cord - 6 Ft","family":"","size":"","cat":""},{"id":"1115-1132552","name":"DreamStation Go Power Cord - 10 Ft","family":"","size":"","cat":""},{"id":"1115-1133275","name":"DreamStation Go Small Travel Kit","family":"","size":"","cat":""},{"id":"1115-1133276","name":"DreamStation Go Medium Travel Kit","family":"","size":"","cat":""},{"id":"1115-1133281","name":"Battery Pack DreamStation Go Overnight","family":"","size":"","cat":""},{"id":"1115-1137961","name":"Connector DreamWisp Sml","family":"","size":"","cat":""},{"id":"1115-1137962","name":"Connector DreamWisp Med","family":"","size":"","cat":""},{"id":"1115-1137963","name":"Connector DreamWisp Lrg","family":"","size":"","cat":""},{"id":"1115-14530PF","name":"Filter fits Drive Low Air Loss Mattress 14530","family":"","size":"","cat":""},{"id":"1115-18181500","name":"CPAP Moisture Therapy","family":"","size":"","cat":""},{"id":"1115-19729","name":"Filter Cover fits A10 PAP - Charcoal","family":"","size":"","cat":""},{"id":"1115-19768","name":"Filter Cover fits A10 PAP For Her - Gray","family":"","size":"","cat":""},{"id":"1115-19CC00","name":"Car Charger CPAP Battery fits all Zopec","family":"","size":"","cat":""},{"id":"1115-19SP00","name":"Solar Panel CPAP Zopec 40W","family":"","size":"","cat":""},{"id":"1115-19UPS0","name":"Power Supply CPAP Battery fits all Zopec","family":"","size":"","cat":""},{"id":"1115-2202","name":"VirtuCLEAN Travel Bag","family":"","size":"","cat":""},{"id":"1115-2203","name":"VirtuCLEAN USB Charging Cables and Wall Mount","family":"","size":"","cat":""},{"id":"1115-2250","name":"CPAP Sanitizing Machine VirtuCLEAN","family":"","size":"","cat":""},{"id":"1115-33963","name":"CPAP Tubing Cover Resmed","family":"","size":"","cat":""},{"id":"1115-3655LT-601","name":"Filter Air Intake fits Devilbiss Nebulizer","family":"","size":"","cat":""},{"id":"1115-36970","name":"DC Converter for Resmed S9","family":"","size":"","cat":""},{"id":"1115-37303","name":"Air 10 Side Cover - Charcoal","family":"","size":"","cat":""},{"id":"1115-37304","name":"Bag For CPAP A10","family":"","size":"","cat":""},{"id":"1115-37335","name":"Air 10 Side Cover - Grey","family":"","size":"","cat":""},{"id":"1115-37342","name":"Air10 Power Supply Unit Adapter","family":"","size":"","cat":""},{"id":"1115-38012","name":"AirMini HumidX F20 HME - 3 Pack","family":"","size":"","cat":""},{"id":"1115-38809","name":"AirMini HumidX HME - 3 Pack","family":"","size":"","cat":""},{"id":"1115-38810","name":"AirMini HumidX HME - 6 Pack","family":"","size":"","cat":""},{"id":"1115-38812","name":"AirMini HumidX Plus HME - 3 Pack","family":"","size":"","cat":""},{"id":"1115-38813","name":"AirMini HumidX Plus HME - 6 Pack","family":"","size":"","cat":""},{"id":"1115-38826","name":"AirMini Drawstring Bag","family":"","size":"","cat":""},{"id":"1115-38828","name":"AirMini 20W Power Supply","family":"","size":"","cat":""},{"id":"1115-38839","name":"AirMini DC Converter","family":"","size":"","cat":""},{"id":"K-1109-1133387","name":"DreamWear FFM w/ Hgr - Lrg Cush / Sml Frame","family":"","size":"","cat":""},{"id":"K-1109-1133388","name":"DreamWear FFM w/ Hgr - Med Wd Cush / Sml Frame","family":"","size":"","cat":""},{"id":"K-1109-1133390","name":"DreamWear FFM w/ Hgr - Sml Cush / Lrg Frame","family":"","size":"","cat":""},{"id":"K-1109-1133391","name":"DreamWear FFM w/ Hgr - Med Cush / Lrg Frame","family":"","size":"","cat":""},{"id":"K-1109-1133392","name":"DreamWear FFM w/ Hgr - Lrg Cush / Lrg Frame","family":"","size":"","cat":""},{"id":"K-1109-1133393","name":"DreamWear FFM w/ Hgr - Med Wd Cush / Lrg Frame","family":"","size":"","cat":""},{"id":"K-1109-1133400","name":"DreamWear FFM w/ Hgr - Fitpack on Med Frame","family":"","size":"","cat":""},{"id":"K-1109-400475","name":"Simplus FullFace Mask w/ Hgr - Sml","family":"","size":"","cat":""},{"id":"K-1109-400476","name":"Simplus FullFace Mask w/ Hgr - Med","family":"","size":"","cat":""},{"id":"K-1109-400477","name":"Simplus FullFace Mask w/ Hgr - Lrg","family":"","size":"","cat":""},{"id":"K-1109-61200","name":"Mirage Quattro FullFace Mask w/ Hgr - X-Sml","family":"","size":"","cat":""},{"id":"K-1109-61201","name":"Mirage Quattro FullFace Mask w/ Hgr - Sml","family":"","size":"","cat":""},{"id":"K-1109-61202","name":"Mirage Quattro FullFace Mask w/ Hgr - Med","family":"","size":"","cat":""},{"id":"K-1109-61203","name":"Mirage Quattro FullFace Mask w/ Hgr - Lrg","family":"","size":"","cat":""},{"id":"K-1109-61700","name":"Quattro FX FullFace Mask w/ Hgr - Sml","family":"","size":"","cat":""},{"id":"K-1109-61701","name":"Quattro FX FullFace Mask w/ Hgr - Med","family":"","size":"","cat":""},{"id":"K-1109-61702","name":"Quattro FX FullFace Mask w/ Hgr - Lrg","family":"","size":"","cat":""},{"id":"K-1109-62501","name":"Quattro FX for Her FullFace Mask w/ Hgr - Sml","family":"","size":"","cat":""},{"id":"K-1109-62502","name":"Quattro FX for Her FullFace Mask w/ Hgr - Med","family":"","size":"","cat":""},{"id":"K-1109-62701","name":"Quattro Air FullFace Mask w/ Hgr - Sml","family":"","size":"","cat":""},{"id":"K-1109-62702","name":"Quattro Air FullFace Mask w/ Hgr - Med","family":"","size":"","cat":""},{"id":"K-1109-62703","name":"Quattro Air FullFace Mask w/ Hgr - Lrg","family":"","size":"","cat":""},{"id":"K-1109-62740","name":"Quattro Air for Her FullFace Mask w/ Hgr - X-Sml","family":"","size":"","cat":""},{"id":"K-1109-62741","name":"Quattro Air for Her FullFace Mask w/ Hgr - Sml","family":"","size":"","cat":""},{"id":"K-1109-62742","name":"Quattro Air for Her FullFace Mask w/ Hgr - Med","family":"","size":"","cat":""},{"id":"K-1109-63000","name":"AirTouch F20 FullFace Mask w/ Hgr - Sml","family":"","size":"","cat":""},{"id":"K-1109-63001","name":"AirTouch F20 FullFace Mask w/ Hgr - Med","family":"","size":"","cat":""},{"id":"K-1109-63002","name":"AirTouch F20 FullFace Mask w/ Hgr - Lrg","family":"","size":"","cat":""},{"id":"K-1109-63003","name":"AirTouch F20 FullFace Mask for Her w/ Hgr - Sml","family":"","size":"","cat":""},{"id":"K-1109-63004","name":"AirTouch F20 FullFace Mask for Her w/ Hgr - Med","family":"","size":"","cat":""},{"id":"K-1109-63101","name":"Airfit F10 FullFace Mask w/ Hgr - Sml","family":"","size":"","cat":""},{"id":"K-1109-63102","name":"Airfit F10 FullFace Mask w/ Hgr - Med","family":"","size":"","cat":""},{"id":"K-1109-63103","name":"Airfit F10 FullFace Mask w/ Hgr - Lrg","family":"","size":"","cat":""},{"id":"K-1109-63139","name":"Airfit F10 for Her FullFace Mask w/ Hgr - X-Sml","family":"","size":"","cat":""},{"id":"K-1109-63140","name":"Airfit F10 for Her FullFace Mask w/ Hgr - Sml","family":"","size":"","cat":""},{"id":"K-1109-63141","name":"Airfit F10 for Her FullFace Mask w/ Hgr - Med","family":"","size":"","cat":""},{"id":"K-1109-63330","name":"Airfit F30i FFM Mask w/ Hgr - Sml Cush / Sml Frm","family":"","size":"","cat":""},{"id":"K-1109-63331","name":"Airfit F30i FFM Mask w/ Hgr - Sml Cush / Std Frm","family":"","size":"","cat":""},{"id":"K-1109-63332","name":"Airfit F30i FFM Mask w/ Hgr - Med Cush / Std Frm","family":"","size":"","cat":""},{"id":"K-1109-63333","name":"Airfit F30i FFM Mask w/ Hgr - Wd Cush / Std Frm","family":"","size":"","cat":""},{"id":"K-1109-63334","name":"Airfit F30i FFM Mask w/ Hgr - Med Cush / Lrg Frm","family":"","size":"","cat":""},{"id":"K-1109-63400","name":"Airfit F20 FullFace Mask w/ Hgr - Sml","family":"","size":"","cat":""},{"id":"K-1109-63401","name":"Airfit F20 FullFace Mask w/ Hgr - Med","family":"","size":"","cat":""},{"id":"K-1109-63402","name":"Airfit F20 FullFace Mask w/ Hgr - Lrg","family":"","size":"","cat":""},{"id":"K-1109-63403","name":"Airfit F20 FullFace Mask for Her w/ Hgr - Sml","family":"","size":"","cat":""},{"id":"K-1109-63404","name":"Airfit F20 FullFace Mask for Her w/ Hgr - Med","family":"","size":"","cat":""},{"id":"K-1109-64600","name":"Airfit F40 FullFace Mask w/ Hgr - SM Cush/Std Fr","family":"","size":"","cat":""},{"id":"K-1109-64601","name":"Airfit F40 FullFace Mask w/ Hgr - Med Cush/Std Fr","family":"","size":"","cat":""},{"id":"K-1109-64602","name":"Airfit F40 FullFace Mask w/ Hgr - Lrg Cush/Std Fr","family":"","size":"","cat":""},{"id":"K-1109-64603","name":"Airfit F40 FullFace Mask w/ Hgr - Med Cush/Sml Fr","family":"","size":"","cat":""},{"id":"K-1111-63851","name":"Airfit P30i Pillow Mask w/ Hgr - Sml Frame Fitpack","family":"","size":"","cat":""},{"id":"P-0901-37216","name":"ASV AirCurve 10 ASV w/ HumidAir HH","family":"","size":"","cat":""},{"id":"P-0901-39013","name":"BiPAP AirCurve 11 ASV w/ HumidAir HH","family":"","size":"","cat":""},{"id":"P-0905-36059","name":"BPAP ST S9 VPAP ST-A w/ Heated Humid","family":"","size":"","cat":""},{"id":"P-0905-37307","name":"BPAP ST AirCurve 10 ST w/ HumidAir HH","family":"","size":"","cat":""},{"id":"P-FullFaceMask-Syst","name":"FullFace Mask System with Cushions & Headgear","family":"","size":"","cat":""},{"id":"P-NasalMask-Syst","name":"Nasal Mask System with Cushions & Headgear","family":"","size":"","cat":""},{"id":"P-PillowMask-Syst","name":"Pillow Mask System with Cushions & Headgear","family":"","size":"","cat":""}];
+const SNAP_LOOKUP = [{"id":"CF-1122446-1","name":"Dreamstation Pollen Filter","hcpcs":""},{"id":"TUB0018","name":"18\" CPAP Tubing Dark Gray (Easy-Flex Lightweight Tubing, 18\" Dark Gray with 22 mm Cuffs (Sunset))","hcpcs":""},{"id":"3BCL1010","name":"3B ComfortLine Heated Tubing (Hybernite Compatible)","hcpcs":""},{"id":"CF8005-1","name":"3B Luna Disposable Filter","hcpcs":""},{"id":"900ICON208","name":"6' ICON Heated Tubing (ThermoSmart)","hcpcs":""},{"id":"900HC522","name":"6' ThermoSmart Heated Tubing (for F&P Thermosmart machine)","hcpcs":""},{"id":"400HC328","name":"Adjustable and Stretchwise Headgear for Pilairo Q","hcpcs":""},{"id":"63141","name":"AirFit F10 For Her Kit- Medium","hcpcs":""},{"id":"63140","name":"AirFit F10 For Her Kit- Small","hcpcs":""},{"id":"63139","name":"AirFit F10 For Her Kit- XSmall","hcpcs":""},{"id":"63103","name":"AirFit F10 Large Kit","hcpcs":""},{"id":"63163","name":"AirFit F10 Mask Only w/ LG Cushion","hcpcs":""},{"id":"63162","name":"AirFit F10 Mask Only w/ MD Cushion","hcpcs":""},{"id":"63161","name":"AirFit F10 Mask Only w/ Small Cushion","hcpcs":""},{"id":"63160","name":"AirFit F10 Mask Only w/ XS Cushion","hcpcs":""},{"id":"63102","name":"AirFit F10 Medium Kit","hcpcs":""},{"id":"63101","name":"AirFit F10 Small Kit","hcpcs":""},{"id":"63469","name":"AirFit F20 FFM Cushion LG","hcpcs":""},{"id":"63468","name":"AirFit F20 FFM Cushion MD","hcpcs":""},{"id":"63467","name":"AirFit F20 FFM Cushion SM","hcpcs":""},{"id":"63402","name":"AirFit F20 FFM Kit with HG Large","hcpcs":""},{"id":"63401","name":"AirFit F20 FFM Kit with HG Medium","hcpcs":""},{"id":"63400","name":"AirFit F20 FFM Kit with HG Small","hcpcs":""},{"id":"63462","name":"AirFit F20 FFM Mask Only LG","hcpcs":""},{"id":"63461","name":"AirFit F20 FFM Mask Only MD","hcpcs":""},{"id":"63460","name":"AirFit F20 FFM Mask Only SM","hcpcs":""},{"id":"63404","name":"AirFit F20 For Her FFM Kit with HG Medium","hcpcs":""},{"id":"63403","name":"AirFit F20 For Her FFM Kit with HG Small","hcpcs":""},{"id":"63473","name":"AirFit F20 For Her HG SM Pink","hcpcs":""},{"id":"63464","name":"AirFit F20 For Her Mask Only Medium","hcpcs":""},{"id":"63463","name":"AirFit F20 For Her Mask Only Small","hcpcs":""},{"id":"63472","name":"AirFit F20 HG Large","hcpcs":""},{"id":"63470","name":"AirFit F20 HG Small","hcpcs":""},{"id":"63471","name":"AirFit F20 HG Standard","hcpcs":""},{"id":"63334","name":"AirFit F30i Complete System - M/LGE","hcpcs":""},{"id":"63332","name":"AirFit F30i Complete System - M/Std","hcpcs":""},{"id":"63330","name":"AirFit F30i Complete System - S/Sml","hcpcs":""},{"id":"63331","name":"AirFit F30i Complete System - S/Std","hcpcs":""},{"id":"63333","name":"AirFit F30i Complete System - W/Std","hcpcs":""},{"id":"63351","name":"AirFit F30i Cushion - Medium","hcpcs":""},{"id":"63350","name":"AirFit F30i Cushion - Small","hcpcs":""},{"id":"63352","name":"AirFit F30i Cushion - Small/Wide","hcpcs":""},{"id":"63353","name":"AirFit F30i Cushion - Wide","hcpcs":""},{"id":"63364","name":"AirFit F30i Frame System - M/LGE","hcpcs":""},{"id":"63356","name":"AirFit F30i Frame System - M/Sml","hcpcs":""},{"id":"63360","name":"AirFit F30i Frame System - M/Std","hcpcs":""},{"id":"63363","name":"AirFit F30i Frame System - S/LGE","hcpcs":""},{"id":"63355","name":"AirFit F30i Frame System - S/Sml","hcpcs":""},{"id":"63359","name":"AirFit F30i Frame System - S/STD","hcpcs":""},{"id":"63365","name":"AirFit F30i Frame System - SW/LGE","hcpcs":""},{"id":"63357","name":"AirFit F30i Frame System - SW/Sml","hcpcs":""},{"id":"63361","name":"AirFit F30i Frame System - SW/Std","hcpcs":""},{"id":"63366","name":"AirFit F30i Frame System - W/LGE","hcpcs":""},{"id":"63358","name":"AirFit F30i Frame System - W/Sml","hcpcs":""},{"id":"63362","name":"AirFit F30i Frame System - W/Std","hcpcs":""},{"id":"63372","name":"AirFit F30i Headgear","hcpcs":""},{"id":"64602","name":"AirFit F40 Complete Mask System Large/Standard","hcpcs":"A7030, A7035"},{"id":"64604","name":"AirFit F40 Complete Mask System Medium/Large","hcpcs":"A7030, A7035"},{"id":"64603","name":"AirFit F40 Complete Mask System Medium/Small","hcpcs":"A7030, A7035"},{"id":"64601","name":"AirFit F40 Complete Mask System Medium/Standard","hcpcs":"A7030, A7035"},{"id":"64600","name":"AirFit F40 Complete Mask System Small Wide/Standard","hcpcs":"A7030, A7035"},{"id":"64629","name":"AirFit F40 Cushion Large","hcpcs":"A7031"},{"id":"64628","name":"AirFit F40 Cushion Medium","hcpcs":"A7031"},{"id":"64627","name":"AirFit F40 Cushion Small Wide","hcpcs":"A7031"},{"id":"64609","name":"AirFit F40 Frame System Large","hcpcs":""},{"id":"64608","name":"AirFit F40 Frame System Medium","hcpcs":""},{"id":"64607","name":"AirFit F40 Frame System Small Wide","hcpcs":""},{"id":"64635","name":"AirFit F40 Headgear Large","hcpcs":""},{"id":"64633","name":"AirFit F40 Headgear Small","hcpcs":""},{"id":"64634","name":"AirFit F40 Headgear Standard","hcpcs":""},{"id":"63502","name":"AirFit N20 Complete Mask Kit Large","hcpcs":""},{"id":"63501","name":"AirFit N20 Complete Mask Kit Medium","hcpcs":""},{"id":"63503","name":"AirFit N20 Complete Mask Kit Small","hcpcs":""},{"id":"63550","name":"AirFit N20 Cushion (Small)","hcpcs":""},{"id":"63552","name":"AirFit N20 Cushion Large","hcpcs":""},{"id":"63551","name":"AirFit N20 Cushion Medium","hcpcs":""},{"id":"63500","name":"AirFit N20 For Her Complete Mask Kit (Small)","hcpcs":""},{"id":"63554","name":"AirFit N20 For Her Mask Only (Small)","hcpcs":""},{"id":"63562","name":"AirFit N20 HG Only LGE Blue","hcpcs":""},{"id":"63560","name":"AirFit N20 HG Only Small Blue","hcpcs":""},{"id":"63561","name":"AirFit N20 HG Only STD Blue","hcpcs":""},{"id":"63556","name":"AirFit N20 Mask Only (Large)","hcpcs":""},{"id":"63558","name":"AirFit N20 Small Pink Headgear","hcpcs":""},{"id":"63555","name":"AirFit N20 Without Headgear (Medium)","hcpcs":""},{"id":"63553","name":"AirFit N20 Without Headgear (Small)","hcpcs":""},{"id":"64216","name":"AirFit N30 Headgear","hcpcs":""},{"id":"64214","name":"AirFit N30 Nasal Cushion; Medium","hcpcs":""},{"id":"64213","name":"AirFit N30 Nasal Cushion; Small","hcpcs":""},{"id":"64215","name":"AirFit N30 Nasal Cushion; Sml-Wide","hcpcs":""},{"id":"64212","name":"AirFit N30 Nasal Mask Frame System; Sml-Wide; w/Cshn; No Hdgr","hcpcs":""},{"id":"64211","name":"AirFit N30 Nasal Mask Frame System-Medium-w/ Cushion; No Hdgr","hcpcs":""},{"id":"64210","name":"AirFit N30 Nasal Mask Frame System-Small-w/ Cushion; No Hdgr","hcpcs":""},{"id":"64224","name":"AirFit N30 Nasal Mask System; Sml-Wide; w/ Frame, Cushion, Hdgr","hcpcs":""},{"id":"64223","name":"AirFit N30 Nasal Mask System-Medium-w/ Frame, Cushion, Hdgr","hcpcs":""},{"id":"64222","name":"AirFit N30 Nasal Mask System-Small-w/ Frame, Cushion, Hdgr","hcpcs":""},{"id":"63801","name":"AirFit N30i Complete Mask System, Small","hcpcs":""},{"id":"63800","name":"AirFit N30i Complete Mask System, Standard","hcpcs":""},{"id":"63811","name":"AirFit N30i Cushion Only, Medium","hcpcs":""},{"id":"63813","name":"AirFit N30i Cushion Only, Small","hcpcs":""},{"id":"63810","name":"AirFit N30i Cushion Only, Small-Wide","hcpcs":""},{"id":"63812","name":"AirFit N30i Cushion Only, Wide","hcpcs":""},{"id":"63805","name":"AirFit N30i Small Frame Medium Cushion","hcpcs":""},{"id":"63803","name":"AirFit N30i Small Frame Small Cushion","hcpcs":""},{"id":"63809","name":"AirFit N30i Small Frame Small-Wide Cushion","hcpcs":""},{"id":"63807","name":"AirFit N30i Small Frame Wide Cushion","hcpcs":""},{"id":"63804","name":"AirFit N30i Standard Frame Medium Cushion","hcpcs":""},{"id":"63802","name":"AirFit N30i Standard Frame Small Cushion","hcpcs":""},{"id":"63808","name":"AirFit N30i Standard Frame Small-Wide Cushion","hcpcs":""},{"id":"63806","name":"AirFit N30i Standard Frame Wide Cushion","hcpcs":""},{"id":"63814","name":"AirFit N30i/P30i Headgear Only","hcpcs":""},{"id":"62936","name":"AirFit P10 For Her Headgear Only","hcpcs":""},{"id":"62910","name":"AirFit P10 for Her Nasal Pillows System Fit Pack (XS, S, M)","hcpcs":""},{"id":"62935","name":"AirFit P10 Headgear Only","hcpcs":""},{"id":"62923","name":"AirFit P10 Mask Only LG","hcpcs":""},{"id":"62922","name":"AirFit P10 Mask Only MD","hcpcs":""},{"id":"62921","name":"AirFit P10 Mask Only Small","hcpcs":""},{"id":"62933","name":"AirFit P10 Nasal Pillows Size Large (Blue Clip)","hcpcs":""},{"id":"62932","name":"AirFit P10 Nasal Pillows Size Medium (Gray Clip)","hcpcs":""},{"id":"62931","name":"AirFit P10 Nasal Pillows Size Small (Clear Clip)","hcpcs":""},{"id":"62900","name":"AirFit P10 Nasal Pillows System Mask Fit Pack (S, M, L)","hcpcs":""},{"id":"62930","name":"AirFit P10 Nasal Pillows X-Small (Pink Clip)","hcpcs":""},{"id":"62920","name":"AirFit P10 XS Mask Only","hcpcs":""},{"id":"63863","name":"AirFit P30i Large Pillow","hcpcs":""},{"id":"63862","name":"AirFit P30i Medium Pillow","hcpcs":""},{"id":"63851","name":"AirFit P30i Small Fit Pack - Small Frame; Hdgr; S, M pllw","hcpcs":""},{"id":"63853","name":"AirFit P30i Small Frame System - L - No Hdgr","hcpcs":""},{"id":"63855","name":"AirFit P30i Small Frame System - M cushion - No Hdgr","hcpcs":""},{"id":"63857","name":"AirFit P30i Small Frame System - S - No Hdgr","hcpcs":""},{"id":"63861","name":"AirFit P30i Small Pillow","hcpcs":""},{"id":"63850","name":"AirFit P30i Standard Fit Pack Std Frame; Hdgr; S, M, L pllw","hcpcs":""},{"id":"63852","name":"AirFit P30i Standard Frame System - L cushion - No Hdgr","hcpcs":""},{"id":"63854","name":"AirFit P30i Standard Frame System - M cushion - No Hdgr","hcpcs":""},{"id":"63856","name":"AirFit P30i Standard Frame System - S - No Hdgr","hcpcs":""},{"id":"38815","name":"AirMini Filters 3 Pack","hcpcs":""},{"id":"38841","name":"AirMini Hard Travel Case","hcpcs":""},{"id":"38840","name":"AirMini Premium Travel Bag","hcpcs":""},{"id":"39102","name":"AirSense 11 ClimateLine Air Heated Tubing","hcpcs":"A4604"},{"id":"39100","name":"AirSense 11 HumidAir Standard Water Tub","hcpcs":""},{"id":"63002","name":"AirTouch F20 Complete System - Large","hcpcs":""},{"id":"63001","name":"AirTouch F20 Complete System - Medium","hcpcs":""},{"id":"63000","name":"AirTouch F20 Complete System - Small","hcpcs":""},{"id":"63030","name":"AirTouch F20 Cushion Large","hcpcs":""},{"id":"63029","name":"AirTouch F20 Cushion Medium","hcpcs":""},{"id":"63028","name":"AirTouch F20 Cushion Small","hcpcs":""},{"id":"63004","name":"AirTouch F20 for Her - Complete Kit - Medium","hcpcs":""},{"id":"63003","name":"AirTouch F20 for Her Complete Kit - Small","hcpcs":""},{"id":"63025","name":"AirTouch F20 for Her Mask Only - Medium","hcpcs":""},{"id":"63024","name":"AirTouch F20 For Her Mask Only - Small","hcpcs":""},{"id":"63023","name":"AirTouch F20 Mask Only - Large","hcpcs":""},{"id":"63022","name":"AirTouch F20 Mask Only - Medium","hcpcs":""},{"id":"63021","name":"AirTouch F20 Mask Only - Small","hcpcs":""},{"id":"63902","name":"AirTouch N20 Complete Mask System - Large","hcpcs":""},{"id":"63901","name":"AirTouch N20 Complete Mask System - Medium","hcpcs":""},{"id":"63903","name":"AirTouch N20 Complete Mask System - Small","hcpcs":""},{"id":"63952","name":"AirTouch N20 Cushion - Large","hcpcs":""},{"id":"63951","name":"AirTouch N20 Cushion - Medium","hcpcs":""},{"id":"63950","name":"AirTouch N20 Cushion - Small","hcpcs":""},{"id":"63900","name":"AirTouch N20 For Her Complete Mask System - Small","hcpcs":""},{"id":"63954","name":"AirTouch N20 For Her Frame System - Small","hcpcs":""},{"id":"63956","name":"AirTouch N20 Frame System - Large","hcpcs":""},{"id":"63955","name":"AirTouch N20 Frame System - Medium","hcpcs":""},{"id":"63953","name":"AirTouch N20 Frame System - Small","hcpcs":""},{"id":"62332","name":"AirTouch N30i Cushion - L","hcpcs":""},{"id":"62331","name":"AirTouch N30i Cushion - M","hcpcs":""},{"id":"62330","name":"AirTouch N30i Cushion - SW","hcpcs":""},{"id":"62321","name":"AirTouch N30i Frame Sys - L/SML","hcpcs":""},{"id":"62318","name":"AirTouch N30i Frame Sys - L/STD","hcpcs":""},{"id":"62320","name":"AirTouch N30i Frame Sys - M/SML","hcpcs":""},{"id":"62317","name":"AirTouch N30i Frame Sys - M/STD","hcpcs":""},{"id":"62319","name":"AirTouch N30i Frame Sys - SW/SML","hcpcs":""},{"id":"62316","name":"AirTouch N30i Frame Sys - SW/STD","hcpcs":""},{"id":"62315","name":"AirTouch N30i Mask (Complete) - L/SML","hcpcs":""},{"id":"62312","name":"AirTouch N30i Mask (Complete) - L/STD","hcpcs":""},{"id":"62314","name":"AirTouch N30i Mask (Complete) - M/SML","hcpcs":""},{"id":"62311","name":"AirTouch N30i Mask (Complete) - M/STD","hcpcs":""},{"id":"62301","name":"AirTouch N30i Mask (Complete) - SML STPK","hcpcs":""},{"id":"62300","name":"AirTouch N30i Mask (Complete) - STD STPK","hcpcs":""},{"id":"62313","name":"AirTouch N30i Mask (Complete) - SW/SML","hcpcs":""},{"id":"62310","name":"AirTouch N30i Mask (Complete) - SW/STD","hcpcs":""},{"id":"1090294","name":"Amara Full Face Cushion Size Large","hcpcs":""},{"id":"1090293","name":"Amara Full Face Cushion Size Medium","hcpcs":""},{"id":"1090290","name":"Amara Full Face Cushion Size Petite","hcpcs":""},{"id":"1090292","name":"Amara Full Face Cushion Size Small","hcpcs":""},{"id":"1090494","name":"Amara Full Face Gel Cushion Size Large","hcpcs":""},{"id":"1090493","name":"Amara Full Face Gel Cushion Size Medium","hcpcs":""},{"id":"1090490","name":"Amara Full Face Gel Cushion Size Petite","hcpcs":""},{"id":"1090492","name":"Amara Full Face Gel Cushion Size Small","hcpcs":""},{"id":"1090406","name":"Amara Gel Large FFM Kit","hcpcs":""},{"id":"1090416","name":"Amara Gel Mask Only Large","hcpcs":""},{"id":"1090415","name":"Amara Gel Mask Only Medium","hcpcs":""},{"id":"1090411","name":"Amara Gel Mask Only Small","hcpcs":""},{"id":"1090405","name":"Amara Gel Medium FFM Kit","hcpcs":""},{"id":"1090400","name":"Amara Gel Petite FFM Kit","hcpcs":""},{"id":"1090401","name":"Amara Gel Small FFM Kit","hcpcs":""},{"id":"1090694","name":"Amara VIEW Full Face Cushion Size Large","hcpcs":""},{"id":"1090693","name":"Amara VIEW Full Face Cushion Size Medium","hcpcs":""},{"id":"1090692","name":"Amara VIEW Full Face Cushion Size Small","hcpcs":""},{"id":"1090696","name":"Amara VIEW Full Face Headgear-Large","hcpcs":""},{"id":"1090697","name":"Amara VIEW Full Face Headgear-Standard","hcpcs":""},{"id":"1090624","name":"Amara VIEW Full Face Mask Kit - Large","hcpcs":""},{"id":"1090623","name":"Amara VIEW Full Face Mask Kit - Medium","hcpcs":""},{"id":"1090622","name":"Amara VIEW Full Face Mask Kit Size Small","hcpcs":""},{"id":"1090634","name":"Amara VIEW Full Face Mask Only - Large","hcpcs":""},{"id":"1090633","name":"Amara VIEW Full Face Mask Only - Medium","hcpcs":""},{"id":"1090632","name":"Amara VIEW Full Face Mask Only Size Small","hcpcs":""},{"id":"61582","name":"Bella Headgear Assembly; Gray","hcpcs":""},{"id":"61581","name":"Bella Headgear Loops for Swift FX Mask","hcpcs":""},{"id":"400BRE120","name":"Brevida Headgear Only","hcpcs":""},{"id":"BRE1SMA","name":"Brevida Mask W/ HDGR xs-s/M-L A model FIT PACK","hcpcs":""},{"id":"400BRE114","name":"Brevida Nasal Pillows MD/LG","hcpcs":""},{"id":"400BRE113","name":"Brevida Nasal Pillows XS-S","hcpcs":""},{"id":"37298","name":"ClimateLineAir Tubing for AirSense & AirCurve (NOT A11 or S9)","hcpcs":""},{"id":"1070105","name":"ComfortGel Blue Nasal Cushion and Flap Size Large","hcpcs":""},{"id":"1070106","name":"ComfortGel Blue Nasal Cushion and Flap Size Medium","hcpcs":""},{"id":"1070108","name":"ComfortGel Blue Nasal Cushion and Flap Size Petite","hcpcs":""},{"id":"1070107","name":"ComfortGel Blue Nasal Cushion and Flap Size Small","hcpcs":""},{"id":"1070037","name":"ComfortGel Blue Nasal Mask Kit Size Large","hcpcs":""},{"id":"1070038","name":"ComfortGel Blue Nasal Mask Kit Size Medium","hcpcs":""},{"id":"1070040","name":"ComfortGel Blue Nasal Mask Kit Size Petite","hcpcs":""},{"id":"1070039","name":"ComfortGel Blue Nasal Mask Kit Size Small","hcpcs":""},{"id":"1070041","name":"ComfortGel Blue Nasal Mask Only Size Large","hcpcs":""},{"id":"1070042","name":"ComfortGel Blue Nasal Mask Only Size Medium","hcpcs":""},{"id":"1070044","name":"ComfortGel Blue Nasal Mask Only Size Petite","hcpcs":""},{"id":"1070043","name":"ComfortGel Blue Nasal Mask Only Size Small","hcpcs":""},{"id":"CS004L","name":"Deluxe Chinstrap Size Large","hcpcs":""},{"id":"CF4003-1","name":"Disposable Filters for Icon PAP Devices","hcpcs":""},{"id":"CF-1122447-1","name":"Dreamstation Replacement Disp Filter x 1","hcpcs":""},{"id":"1122520","name":"Dreamstation Water Chamber","hcpcs":""},{"id":"PR15","name":"Dreamstation White STD 6ft Performance Tube","hcpcs":""},{"id":"1133407","name":"DreamWear FFM LG Cushion MD Frame; w/o HG","hcpcs":""},{"id":"1133410","name":"DreamWear FFM with Small Cushion and Frame w/o HG","hcpcs":""},{"id":"1133405","name":"DreamWear FFM, SM Cushion, MD Frame w/o HG","hcpcs":""},{"id":"1133392","name":"DreamWear FFM; LG Cushion LG Frame; w/ HG","hcpcs":""},{"id":"1133417","name":"DreamWear FFM; LG Cushion LG Frame; w/o HG","hcpcs":""},{"id":"1133382","name":"DreamWear FFM; LG Cushion MD Frame w/HG","hcpcs":""},{"id":"1133412","name":"DreamWear FFM; LG Cushion/ SM Frame w/o HG","hcpcs":""},{"id":"1133416","name":"DreamWear FFM; MD Cushion, LG Frame w/o HG","hcpcs":""},{"id":"1133413","name":"DreamWear FFM; Medium Wide Cushion and Small Frame w/o HG","hcpcs":""},{"id":"1133415","name":"DreamWear FFM; SM Cushion, LG Frame w/o HG","hcpcs":""},{"id":"1133450","name":"DreamWear Full Face Headgear","hcpcs":""},{"id":"1133400","name":"DreamWear Full Face Mask Fit Pack with S, MD, LG & MD/Wide Cushion; MD Frame w/HG","hcpcs":""},{"id":"1133411","name":"DreamWear Full Face Mask w/Med. Cushion, Small Frame; No Hdgr","hcpcs":""},{"id":"1133387","name":"DreamWear Full Face Mask with Large Cushion and Small Frame with Headgear","hcpcs":""},{"id":"1133391","name":"DreamWear Full Face Mask with Medium Cushion and Large Frame with Headgear","hcpcs":""},{"id":"1133381","name":"DreamWear Full Face Mask with Medium Cushion and Medium Frame with Headgear","hcpcs":""},{"id":"1133406","name":"DreamWear Full Face Mask with Medium Cushion and Medium Frame without Headgear","hcpcs":""},{"id":"1133386","name":"DreamWear Full Face Mask with Medium Cushion and Small Frame with Headgear","hcpcs":""},{"id":"1133393","name":"DreamWear Full Face Mask with Medium Wide Cushion and Large Frame with Headgear","hcpcs":""},{"id":"1133383","name":"DreamWear Full Face Mask with Medium Wide Cushion and Medium Frame with Headgear","hcpcs":""},{"id":"1133408","name":"DreamWear Full Face Mask with Medium Wide Cushion and Medium Frame without Headgear","hcpcs":""},{"id":"1133388","name":"DreamWear Full Face Mask with Medium Wide Cushion and Small Frame with Headgear","hcpcs":""},{"id":"1133390","name":"DreamWear Full Face Mask with Small Cushion and Large Frame with Headgear","hcpcs":""},{"id":"1133380","name":"DreamWear Full Face Mask with Small Cushion and Medium Frame with Headgear","hcpcs":""},{"id":"1133385","name":"DreamWear Full Face Mask with Small Cushion and Small Frame with Headgear","hcpcs":""},{"id":"1133418","name":"DreamWear Full Face Mask; MD/Wide Cushion; LG Frame; w/o HG","hcpcs":""},{"id":"1116751","name":"DreamWear Headgear with Arms","hcpcs":""},{"id":"1116681","name":"DreamWear Kit - MD Frame MD Cushion w/HG","hcpcs":""},{"id":"1116718","name":"DreamWear Large Frame w MD Wide Cushion","hcpcs":""},{"id":"1116716","name":"DreamWear Large Frame w Med Cushion NO HG","hcpcs":""},{"id":"1116691","name":"DreamWear Large Frame w Medium Cushion w HG","hcpcs":""},{"id":"1116715","name":"DreamWear Large Frame w SM Cushion no HG","hcpcs":""},{"id":"1116692","name":"DreamWear Large Frame with LG Cushion w HG","hcpcs":""},{"id":"1116742","name":"DreamWear Lg Cushion","hcpcs":""},{"id":"1116700","name":"DreamWear Mask Fit Pack sm, md, lg, mw Cushions / md Frame w/HG","hcpcs":""},{"id":"1116706","name":"DreamWear Mask Only - MD Frame / MD Cushions","hcpcs":""},{"id":"1116705","name":"DreamWear Mask Only MD Frame SM Cushion","hcpcs":""},{"id":"1116707","name":"DreamWear Mask Only MD Frame w Large Cushion","hcpcs":""},{"id":"1116708","name":"DreamWear Mask Only MD Frame with MD/Wide Cushion","hcpcs":""},{"id":"1116712","name":"DreamWear Mask Only SM Frame w LG Cushions","hcpcs":""},{"id":"1116711","name":"DreamWear Mask Only SM Frame w MD Cushion","hcpcs":""},{"id":"1116713","name":"DreamWear Mask Only SM Frame w MW Cushion","hcpcs":""},{"id":"1116710","name":"DreamWear Mask Only Sm Frame w Sm Cushion","hcpcs":""},{"id":"1116741","name":"DreamWear Md Cushion","hcpcs":""},{"id":"1116743","name":"DreamWear Md Wide Cushion","hcpcs":""},{"id":"1116680","name":"DreamWear Med Frame SM Cush w/HG","hcpcs":""},{"id":"1146474","name":"DreamWear Silicone Pillows Cushion Large","hcpcs":""},{"id":"1146473","name":"DreamWear Silicone Pillows Cushion Medium","hcpcs":""},{"id":"1146475","name":"DreamWear Silicone Pillows Cushion Medium Wide","hcpcs":""},{"id":"1146472","name":"DreamWear Silicone Pillows Cushion Small","hcpcs":""},{"id":"1146450","name":"DreamWear Silicone Pillows Mask with Headgear, Large Frame, Large Cushion","hcpcs":""},{"id":"1146449","name":"DreamWear Silicone Pillows Mask with Headgear, Large Frame, Medium Cushion","hcpcs":""},{"id":"1146451","name":"DreamWear Silicone Pillows Mask with Headgear, Large Frame, Medium Wide Cushion","hcpcs":""},{"id":"1146448","name":"DreamWear Silicone Pillows Mask with Headgear, Large Frame, Small Cushion","hcpcs":""},{"id":"1146416","name":"DreamWear Silicone Pillows Mask with Headgear, Medium Frame, Large Cushion","hcpcs":""},{"id":"1146417","name":"DreamWear Silicone Pillows Mask with Headgear, Medium Frame, Medium Wide Cushion","hcpcs":""},{"id":"1146412","name":"DreamWear Silicone Pillows Mask with Headgear, Small Frame, Large Cushion","hcpcs":""},{"id":"1146413","name":"DreamWear Silicone Pillows Mask with Headgear, Small Frame, Medium Wide Cushion","hcpcs":""},{"id":"1146463","name":"DreamWear Silicone Pillows Mask without Headgear, Large Frame, Large Cushion","hcpcs":""},{"id":"1146462","name":"DreamWear Silicone Pillows Mask without Headgear, Large Frame, Medium Cushion","hcpcs":""},{"id":"1146464","name":"DreamWear Silicone Pillows Mask without Headgear, Large Frame, Medium Wide Cushion","hcpcs":""},{"id":"1146461","name":"DreamWear Silicone Pillows Mask without Headgear, Large Frame, Small Cushion","hcpcs":""},{"id":"1146459","name":"DreamWear Silicone Pillows Mask without Headgear, Medium Frame, Large Cushion","hcpcs":""},{"id":"1146458","name":"DreamWear Silicone Pillows Mask without Headgear, Medium Frame, Medium Cushion","hcpcs":""},{"id":"1146460","name":"DreamWear Silicone Pillows Mask without Headgear, Medium Frame, Medium Wide Cushion","hcpcs":""},{"id":"1146457","name":"DreamWear Silicone Pillows Mask without Headgear, Medium Frame, Small Cushion","hcpcs":""},{"id":"1146455","name":"DreamWear Silicone Pillows Mask without Headgear, Small Frame, Large Cushion","hcpcs":""},{"id":"1146456","name":"DreamWear Silicone Pillows Mask without Headgear, Small Frame, Medium Wide Cushion","hcpcs":""},{"id":"1146453","name":"DreamWear Silicone Pillows Mask without Headgear, Small Frame, Small Cushion","hcpcs":""},{"id":"1146415","name":"DreamWear Silicone Pllw Mask; M Cshn on M Frame; w/Hdgr","hcpcs":""},{"id":"1146454","name":"DreamWear Silicone Pllw Mask; M Cshn on S Frame; No Hdgr","hcpcs":""},{"id":"1146411","name":"DreamWear Silicone Pllw Mask; M Cshn on S Frame; w/Hdgr","hcpcs":""},{"id":"1146414","name":"DreamWear Silicone Pllw Mask; S Cshn on M Frame; w/Hdgr","hcpcs":""},{"id":"1146410","name":"DreamWear Silicone Pllw Mask; S Cshn on S Frame; w/Hdgr","hcpcs":""},{"id":"1146468","name":"DreamWear Silicone Pllws Fitpack-S,M,L,MW cshns;M Frame;Hdgr","hcpcs":""},{"id":"1116740","name":"DreamWear Sm Cushion","hcpcs":""},{"id":"1116688","name":"DreamWear SM Frame MD/Wide Cushion w HG","hcpcs":""},{"id":"1116686","name":"DreamWear Sm Frame w/ Med. Cushion and HG","hcpcs":""},{"id":"1116687","name":"DreamWear Small Frame Large Cushion w HG","hcpcs":""},{"id":"1116685","name":"DreamWear Small Frame Small Cushion and HG","hcpcs":""},{"id":"1116717","name":"DreamWear without Headgear, Large Frame w/Large Cush","hcpcs":""},{"id":"1116693","name":"DreamWear with Headgear, Large Frame w MD Wide Cushion","hcpcs":""},{"id":"1116690","name":"DreamWear with Headgear, Large Frame with Small Cushion","hcpcs":""},{"id":"1116682","name":"DreamWear with Headgear, Medium Frame, Large Cushion","hcpcs":""},{"id":"1116683","name":"DreamWear with Headgear, Medium Frame, MD/Wide Cushion","hcpcs":""},{"id":"1137959","name":"DreamWisp Nasal Mask Cushion: Large","hcpcs":""},{"id":"1137958","name":"DreamWisp Nasal Mask Cushion: Medium","hcpcs":""},{"id":"1137956","name":"DreamWisp Nasal Mask Cushion: Petite","hcpcs":""},{"id":"1137957","name":"DreamWisp Nasal Mask Cushion: Small","hcpcs":""},{"id":"1137960","name":"DreamWisp Nasal Mask Cushion: XL","hcpcs":""},{"id":"1137916","name":"DreamWisp Nasal Mask Fit Pack w/hdgr/Mconnector-S/M/L Cushion","hcpcs":""},{"id":"1137965","name":"DreamWisp Nasal Mask Headgear: Large","hcpcs":""},{"id":"1137966","name":"DreamWisp Nasal Mask Headgear: Reduced Size (RS)","hcpcs":""},{"id":"1137964","name":"DreamWisp Nasal Mask Headgear: Standard","hcpcs":""},{"id":"1137925","name":"DreamWisp Nasal Mask-w/L Cushion/M Connector-No Hdgr","hcpcs":""},{"id":"1137924","name":"DreamWisp Nasal Mask-w/M Cushion/M Connector-No Hdgr","hcpcs":""},{"id":"1137922","name":"DreamWisp Nasal Mask-w/Petite Cushion/M Connector-No Hdgr","hcpcs":""},{"id":"1137923","name":"DreamWisp Nasal Mask-w/S Cushion/M Connector-No Hdgr","hcpcs":""},{"id":"1137926","name":"DreamWisp Nasal Mask-w/XL Cushion/M Connector-No Hdgr","hcpcs":""},{"id":"1142832","name":"DS2 Humidifier Water Tank with Lid, RP","hcpcs":""},{"id":"ESN2LA","name":"Eson 2 Mask Kit - Large","hcpcs":""},{"id":"ESN2SA","name":"Eson 2 Mask Kit - Small","hcpcs":""},{"id":"400HC568","name":"Eson Headgear Size MED/LG","hcpcs":""},{"id":"400HC567","name":"Eson Headgear Size SMALL","hcpcs":""},{"id":"400HC128","name":"Eson Nasal Cushion Size Large","hcpcs":""},{"id":"400HC127","name":"Eson Nasal Cushion Size Medium","hcpcs":""},{"id":"400HC126","name":"Eson Nasal Cushion Size Small","hcpcs":""},{"id":"400HC573","name":"Eson Nasal Mask Only Size Large","hcpcs":""},{"id":"400HC572","name":"Eson Nasal Mask Only Size Medium","hcpcs":""},{"id":"400HC571","name":"Eson Nasal Mask Only Size Small","hcpcs":""},{"id":"400451","name":"Eson Nasal Mask w/ Hdgr Size Large","hcpcs":""},{"id":"400450","name":"Eson Nasal Mask w/ Hdgr Size Medium","hcpcs":""},{"id":"400449","name":"Eson Nasal Mask w/ Hdgr Size Small","hcpcs":""},{"id":"400ESN233","name":"ESON2 Nasal Mask w/o Hdgr Large","hcpcs":""},{"id":"400ESN232","name":"ESON2 Nasal Mask w/o Hdgr Medium","hcpcs":""},{"id":"400ESN231","name":"ESON2 Nasal Mask w/o Hdgr Small","hcpcs":""},{"id":"EVF1XMLA","name":"Evora Full Face Mask w/ Hdgr Fitpack (XS, S/M, L)","hcpcs":""},{"id":"400EVF122","name":"Evora Full Headgear - Extra Large","hcpcs":""},{"id":"400EVF121","name":"Evora Full Headgear - Standard","hcpcs":""},{"id":"400EVF131","name":"Evora Full Mask w/o Hdgr - Extra Small","hcpcs":""},{"id":"400EVF133","name":"Evora Full Mask w/o Hdgr - Large","hcpcs":""},{"id":"400EVF132","name":"Evora Full Mask w/o Hdgr - Small/Medium","hcpcs":""},{"id":"400EVF114","name":"Evora Full Seal - Extra Small","hcpcs":""},{"id":"400EVF116","name":"Evora Full Seal - Large","hcpcs":""},{"id":"400EVF115","name":"Evora Full Seal - Small/Medium","hcpcs":""},{"id":"400EVO117","name":"Evora Nasal Cushion - Large","hcpcs":""},{"id":"400EVO116","name":"Evora Nasal Cushion - Med","hcpcs":""},{"id":"400EVO118","name":"Evora Nasal Cushion - Wide","hcpcs":""},{"id":"400EVO133","name":"Evora Nasal Frame; Large","hcpcs":""},{"id":"400EVO131","name":"Evora Nasal Frame; Small","hcpcs":""},{"id":"400EVO134","name":"Evora Nasal Frame; Wide","hcpcs":""},{"id":"400EVO132","name":"Evora Nasal Frame; Med","hcpcs":""},{"id":"400EVO121","name":"Evora Nasal Headgear","hcpcs":""},{"id":"EVO1SMLA","name":"Evora Nasal Mask Fitpack w/Hdg S,M,L...","hcpcs":""},{"id":"EVO1WA","name":"Evora Nasal Mask w/Hdg - Wide","hcpcs":""},{"id":"EVO1SA","name":"Evora Nasal Mask w/Hdg; Small","hcpcs":""},{"id":"EVO1LA","name":"Evora Nasal Mask w/Hdg; Large","hcpcs":""},{"id":"EVO1MA","name":"Evora Nasal Mask w/Hdg; Med","hcpcs":""},{"id":"400EVO115","name":"Evora Nasal Seal - Small","hcpcs":""},{"id":"400ESN222","name":"F&P Eson 2 Headgear - Medium/Large","hcpcs":""},{"id":"400ESN221","name":"F&P Eson 2 Headgear - Small","hcpcs":""},{"id":"ESN2MA","name":"F&P Eson 2 Mask Kit - Medium","hcpcs":""},{"id":"400ESN214","name":"F&P Eson 2 Seal - Small","hcpcs":""},{"id":"400ESN216","name":"F&P Eson 2 Seal Large","hcpcs":""},{"id":"400ESN215","name":"F&P Eson 2 Seals Medium","hcpcs":""},{"id":"400SLN122","name":"F&P Solo Headgear Only","hcpcs":""},{"id":"400SLN117","name":"F&P Solo Nasal Mask Cushion, Large","hcpcs":""},{"id":"400SLN116","name":"F&P Solo Nasal Mask Cushion, Medium","hcpcs":""},{"id":"400SLN115","name":"F&P Solo Nasal Mask Cushion, Small","hcpcs":""},{"id":"400SLN118","name":"F&P Solo Nasal Mask Cushion, Wide","hcpcs":""},{"id":"SLN1SMLA","name":"F&P Solo Nasal Mask FITPACK, SML","hcpcs":""},{"id":"SLN1LA","name":"F&P Solo Nasal Mask KIT, Large","hcpcs":""},{"id":"SLN1MA","name":"F&P Solo Nasal Mask KIT, Medium","hcpcs":""},{"id":"SLN1SA","name":"F&P Solo Nasal Mask KIT, Small","hcpcs":""},{"id":"SLN1WA","name":"F&P Solo Nasal Mask KIT, Wide","hcpcs":""},{"id":"SLP1LA","name":"F&P Solo Pillows Mask (Complete) Large","hcpcs":""},{"id":"SLP1MA","name":"F&P Solo Pillows Mask (Complete) Medium","hcpcs":""},{"id":"SLP1SA","name":"F&P Solo Pillows Mask (Complete) Small","hcpcs":""},{"id":"400SLP133","name":"F&P Solo Pillows Mask (No Headgear) Large","hcpcs":""},{"id":"400SLP132","name":"F&P Solo Pillows Mask (No Headgear) Medium","hcpcs":""},{"id":"400SLP131","name":"F&P Solo Pillows Mask (No Headgear) Small","hcpcs":""},{"id":"CF-1142828-1","name":"Filter DS2 Disposable 1/pk","hcpcs":""},{"id":"CF-1142687-1","name":"Filter DS2 Re-Usable 1/Pk","hcpcs":""},{"id":"1060802","name":"FitLife Full Face Mask Kit Size Large","hcpcs":""},{"id":"1060801","name":"FitLife Full Face Mask Kit Size Small","hcpcs":""},{"id":"1089991","name":"FitLife Full Face Mask Kit Size X-Large","hcpcs":""},{"id":"1072531","name":"FitLife Full Face Mask Only Size Large","hcpcs":""},{"id":"1072530","name":"FitLife Full Face Mask Only Size Small","hcpcs":""},{"id":"1089992","name":"FitLife Full Face XL Mask Only","hcpcs":""},{"id":"1060808","name":"FitLife Headgear Only Size Large","hcpcs":""},{"id":"1060807","name":"FitLife Headgear Only Size Small","hcpcs":""},{"id":"1089990","name":"FitLife Headgear XL","hcpcs":""},{"id":"FN20L","name":"Fits N20 Large Sized Cushion","hcpcs":""},{"id":"FN20M","name":"Fits N20 Medium Sized Cushion","hcpcs":""},{"id":"FN20S","name":"Fits N20 Small Sized Cushion","hcpcs":""},{"id":"400BRE132","name":"FP Brevida Mask Only MD-LG","hcpcs":""},{"id":"400BRE131","name":"FP Brevida Mask Only XS-SM","hcpcs":""},{"id":"36995","name":"H5i Climateline Tubing (S9 Machines Only!)","hcpcs":""},{"id":"1090296","name":"Headgear for Amara Full-Face Mask - Reduced Size","hcpcs":""},{"id":"1090297","name":"Headgear for Amara Full-Face Mask - Standard Size","hcpcs":""},{"id":"FF20HDGR","name":"Headgear, ResMed AirFit F20 CPAP Mask","hcpcs":""},{"id":"FN20HDGR","name":"Headgear, ResMed AirFit N20 CPAP Mask","hcpcs":""},{"id":"900ICON200","name":"Humidification Chamber for F&P Icon Machine","hcpcs":""},{"id":"HC325S","name":"Humidification Chamber for HC150 Humidifier","hcpcs":""},{"id":"HC385S","name":"Humidification Chamber SleepStyle 200 Series","hcpcs":""},{"id":"1133432","name":"Large DreamWear Full Face Cushion","hcpcs":""},{"id":"CF8005F-1","name":"Luna 1/2 Reusable CPAP Filter - 1/Pack","hcpcs":""},{"id":"LG24510","name":"Luna II Replacement Water Chamber","hcpcs":""},{"id":"1133431","name":"Medium DreamWear Full Face Cushion","hcpcs":""},{"id":"1133433","name":"Medium Wide DreamWear Full Face Cushion","hcpcs":""},{"id":"PR12","name":"Micro-flexible 12mm Tubing","hcpcs":""},{"id":"62137","name":"Mirage FX For Her Mask Only- Small","hcpcs":""},{"id":"62129","name":"Mirage FX For Her Headgear (Pink)","hcpcs":""},{"id":"62128","name":"Mirage FX For Her Nasal Mask Kit","hcpcs":""},{"id":"62136","name":"Mirage FX For Her SM Cushion","hcpcs":""},{"id":"62109","name":"Mirage FX For Her Small Kit","hcpcs":""},{"id":"62110","name":"Mirage FX Headgear","hcpcs":""},{"id":"62111","name":"Mirage FX Nasal Cushion","hcpcs":""},{"id":"62103","name":"Mirage FX Nasal Mask Kit","hcpcs":""},{"id":"62118","name":"Mirage FX Nasal Mask Kit- Wide","hcpcs":""},{"id":"62126","name":"Mirage FX Wide Mask Only","hcpcs":""},{"id":"62125","name":"Mirage FX Wide Nasal Cushion","hcpcs":""},{"id":"61203","name":"Mirage Quattro FFM; w/hdgr Large","hcpcs":""},{"id":"61202","name":"Mirage Quattro FFM; w/hdgr Medium","hcpcs":""},{"id":"61201","name":"Mirage Quattro FFM; w/hdgr Small","hcpcs":""},{"id":"61200","name":"Mirage Quattro FFM; w/hdgr X Small","hcpcs":""},{"id":"61263","name":"Mirage Quattro FFM; w/out hdgr Large","hcpcs":""},{"id":"61262","name":"Mirage Quattro FFM; w/out hdgr Medium","hcpcs":""},{"id":"61261","name":"Mirage Quattro FFM; w/out hdgr Small","hcpcs":""},{"id":"61260","name":"Mirage Quattro FFM; w/out hdgr X Small","hcpcs":""},{"id":"400NVP116","name":"Nova Micro Pillows Cushion, Large","hcpcs":""},{"id":"400NVP115","name":"Nova Micro Pillows Cushion, Medium","hcpcs":""},{"id":"400NVP114","name":"Nova Micro Pillows Cushion, Small","hcpcs":""},{"id":"400NVP122","name":"Nova Micro Pillows Headgear","hcpcs":""},{"id":"NVP1LA","name":"Nova Micro Pillows Mask (Complete), Large","hcpcs":""},{"id":"NVP1MA","name":"Nova Micro Pillows Mask (Complete), Medium","hcpcs":""},{"id":"NVP1SA","name":"Nova Micro Pillows Mask (Complete), Small","hcpcs":""},{"id":"400NVP133","name":"Nova Micro Pillows Mask (No Headgear), Large","hcpcs":""},{"id":"400NVP132","name":"Nova Micro Pillows Mask (No Headgear), Medium","hcpcs":""},{"id":"400NVP131","name":"Nova Micro Pillows Mask (No Headgear), Small","hcpcs":""},{"id":"NVP1SMLA","name":"Nova Micro Pillows Mask Fitpack - (S, M, L)","hcpcs":""},{"id":"1104918","name":"Pico Nasal Mask; w/o hdgr S/M","hcpcs":""},{"id":"1104919","name":"Pico Nasal Mask; w/out hdgr Large","hcpcs":""},{"id":"1104920","name":"Pico Nasal Mask; w/out hdgr XL","hcpcs":""},{"id":"400HC125","name":"Pilairo Nasal Pillows Ea","hcpcs":""},{"id":"400HC565","name":"Pilairo Q Nasal Pillow Mask Only","hcpcs":""},{"id":"400421","name":"Pilairo Q Nasal Pillow Mask with Headgear Kit","hcpcs":""},{"id":"CF1009NT-1","name":"PR System One TABLESS Disposable Filter Qty. 1","hcpcs":""},{"id":"1136502","name":"PR SystemOne 60 Series Water Tank","hcpcs":""},{"id":"1033678","name":"Premium Hdgr w/ EZPeel Tabs","hcpcs":""},{"id":"62739","name":"Quattro Air & AirFit F10 FF Cushion Size Large","hcpcs":""},{"id":"62738","name":"Quattro Air & AirFit F10 FF Cushion Size Medium","hcpcs":""},{"id":"62737","name":"Quattro Air & AirFit F10 FF Cushion Small","hcpcs":""},{"id":"62742","name":"Quattro Air for Her Full Face Kit Size Medium","hcpcs":""},{"id":"62741","name":"Quattro Air for Her Full Face Kit Size Small","hcpcs":""},{"id":"62740","name":"Quattro Air for Her Full Face Kit Size X-Small","hcpcs":""},{"id":"62758","name":"Quattro Air for Her Headgear Size Small","hcpcs":""},{"id":"62759","name":"Quattro Air for Her Headgear Standard Size","hcpcs":""},{"id":"62703","name":"Quattro Air Full Face Kit Size Large","hcpcs":""},{"id":"62702","name":"Quattro Air Full Face Kit Size Medium","hcpcs":""},{"id":"62701","name":"Quattro Air Full Face Kit Size Small","hcpcs":""},{"id":"62755","name":"Quattro Air Full Face Mask Only Size Large","hcpcs":""},{"id":"62754","name":"Quattro Air Full Face Mask Only Size Medium","hcpcs":""},{"id":"62753","name":"Quattro Air Full Face Mask Only Size Small","hcpcs":""},{"id":"62752","name":"Quattro Air Full Face Mask Only Size X-Small","hcpcs":""},{"id":"62757","name":"Quattro Air Headgear Size Small","hcpcs":""},{"id":"62756","name":"Quattro Air Headgear Standard Size","hcpcs":""},{"id":"62736","name":"Quattro Air/F10 Full Face Cushion Size X-Small","hcpcs":""},{"id":"61293","name":"Quattro Full Face Cushion Size Large","hcpcs":""},{"id":"61292","name":"Quattro Full Face Cushion Size Medium","hcpcs":""},{"id":"61291","name":"Quattro Full Face Cushion Size Small","hcpcs":""},{"id":"61290","name":"Quattro Full Face Cushion Size X-Small","hcpcs":""},{"id":"62502","name":"Quattro FX 4 Her Full Face Mask Kit Size Medium","hcpcs":""},{"id":"62501","name":"Quattro FX 4 Her Full Face Mask Kit Size Small","hcpcs":""},{"id":"62507","name":"Quattro FX 4 Her Headgear Size Medium","hcpcs":""},{"id":"62506","name":"Quattro FX 4 Her Headgear Size Small","hcpcs":""},{"id":"62514","name":"Quattro Fx for Her Mask Only Md","hcpcs":""},{"id":"62513","name":"Quattro Fx For Her Mask Only Sm","hcpcs":""},{"id":"61723","name":"Quattro FX Full Face Cushion Size Large","hcpcs":""},{"id":"61722","name":"Quattro FX Full Face Cushion Size Medium","hcpcs":""},{"id":"61721","name":"Quattro FX Full Face Cushion Size Small","hcpcs":""},{"id":"61702","name":"Quattro FX Full Face Mask Kit Size Large","hcpcs":""},{"id":"61701","name":"Quattro FX Full Face Mask Kit Size Medium","hcpcs":""},{"id":"61700","name":"Quattro FX Full Face Mask Kit Size Small","hcpcs":""},{"id":"61726","name":"Quattro FX Full Face Mask Only Size Large","hcpcs":""},{"id":"61725","name":"Quattro FX Full Face Mask Only Size Medium","hcpcs":""},{"id":"61724","name":"Quattro FX Full Face Mask Only Size Small","hcpcs":""},{"id":"61738","name":"Quattro FX Headgear Size Large","hcpcs":""},{"id":"61733","name":"Quattro FX Headgear Size Medium/Standard","hcpcs":""},{"id":"61734","name":"Quattro FX Headgear Size Small","hcpcs":""},{"id":"CF1007-1","name":"REMStar PRO M-Series Disposable Filter Qty. 1","hcpcs":""},{"id":"63165","name":"ResMed AirFit F10 FF HG Small","hcpcs":""},{"id":"63164","name":"ResMed AirFit F10 FF HG STD","hcpcs":""},{"id":"63167","name":"ResMed AirFit F10 For Her HG Only","hcpcs":""},{"id":"63166","name":"ResMed AirFit F10 HG Large","hcpcs":""},{"id":"37299","name":"ResMed AirSense 10 Humidifier Chamber","hcpcs":""},{"id":"16015","name":"ResMed Chinstrap","hcpcs":""},{"id":"26958","name":"ResMed Cleanable/Dishwasher Safe H4i Water Chamber for use with S8 Series Machines","hcpcs":""},{"id":"36803","name":"ResMed S9 H5i Water Chamber Only","hcpcs":""},{"id":"CF-36850-1","name":"S9/S10 Filters","hcpcs":""},{"id":"1104938","name":"Respironics Pico Extra Large Cushion","hcpcs":""},{"id":"1104937","name":"Respironics Pico Large Cushion","hcpcs":""},{"id":"1104940","name":"Respironics Pico Nasal Mask Fit Pack with Headgear and All Sizes","hcpcs":""},{"id":"1104936","name":"Respironics Sm/MD Pico Cushion","hcpcs":""},{"id":"1112031","name":"Respironics Wisp XL Cushion","hcpcs":""},{"id":"FF20L","name":"Resvent CPAP AirFit F20 Cushion Large","hcpcs":""},{"id":"FF20M","name":"Resvent CPAP AirFit F20 Cushion Medium","hcpcs":""},{"id":"FF20S","name":"Resvent CPAP AirFit F20 Cushion Small","hcpcs":""},{"id":"CS007L","name":"Ruby Red Style Chinstrap Sz Large","hcpcs":""},{"id":"CS007M","name":"Ruby Red Style Chinstrap Sz Medium","hcpcs":""},{"id":"CS007S","name":"Ruby Red Style Chinstrap Sz Small","hcpcs":""},{"id":"CS007-ADJXL","name":"Ruby Style Chin Strap, Adjustable XL","hcpcs":""},{"id":"TUB006SS","name":"S9 Slimline Tubing","hcpcs":""},{"id":"36810","name":"S9 Slimline Tubing","hcpcs":""},{"id":"400HC586","name":"Simplus FF Mask Only Large","hcpcs":""},{"id":"400HC585","name":"Simplus FF Mask Only Medium","hcpcs":""},{"id":"400HC584","name":"Simplus FF Mask Only Small","hcpcs":""},{"id":"400HC581","name":"Simplus Full Face Cushion Size Large","hcpcs":""},{"id":"400HC580","name":"Simplus Full Face Cushion Size Medium","hcpcs":""},{"id":"400HC579","name":"Simplus Full Face Cushion Size Small","hcpcs":""},{"id":"400477","name":"Simplus Full Face Mask Kit Size Large","hcpcs":""},{"id":"400476","name":"Simplus Full Face Mask Kit Size Medium","hcpcs":""},{"id":"400475","name":"Simplus Full Face Mask Kit Size Small","hcpcs":""},{"id":"400HC583","name":"Simplus Headgear Med/Large","hcpcs":""},{"id":"400HC582","name":"Simplus Headgear Small","hcpcs":""},{"id":"1133430","name":"Small DreamWear Full Face Cushion","hcpcs":""},{"id":"400SLN133","name":"Solo Nasal Mask, Large (No Headgear)","hcpcs":""},{"id":"400SLN132","name":"Solo Nasal Mask, Medium (No Headgear)","hcpcs":""},{"id":"400SLN131","name":"Solo Nasal Mask, Small (No Headgear)","hcpcs":""},{"id":"400SLN134","name":"Solo Nasal Mask, Wide (No Headgear)","hcpcs":""},{"id":"400SLP116","name":"Solo Nasal Pillows, Size Large","hcpcs":""},{"id":"400SLP115","name":"Solo Nasal Pillows, Size Medium","hcpcs":""},{"id":"400SLP114","name":"Solo Nasal Pillows, Size Small","hcpcs":""},{"id":"SLP1SMLA","name":"Solo Pillow Mask FITPACK, SML","hcpcs":""},{"id":"CF-39300-1","name":"Spirit AirSense 11 Filter 1pk (39300)","hcpcs":"A7038"},{"id":"CS-1012911","name":"Spirit PRI Premium Chin Strap","hcpcs":""},{"id":"TUB06","name":"Standard 6' CPAP Tubing","hcpcs":""},{"id":"TUB10","name":"Sunset 10ft CPAP Standard Tubing","hcpcs":""},{"id":"CF5004F-1","name":"Sunset Devilibiss Intellipap Pollen Filter","hcpcs":""},{"id":"CF2105-1","name":"Sunset Resmed; Filter S8 1/PK","hcpcs":""},{"id":"CF1007F-1","name":"Sunset Resp. Foam Filter Mseries","hcpcs":""},{"id":"CF1009F-1","name":"Sunset Resp. Foam Filter PR SysOne","hcpcs":""},{"id":"CF1006F-1","name":"Sunset Resp. Ultra Fine Flt; Remstar Pro/Plus","hcpcs":""},{"id":"CS007-ADJ","name":"Sunset Ruby Style Chin Strap - Fully Adjustable","hcpcs":""},{"id":"CAP1003S","name":"Sunset Unscented CPAP Wipes","hcpcs":""},{"id":"61529","name":"Swift FX Headgear Only","hcpcs":""},{"id":"61568","name":"Swift FX Bella Gray Nasal Pillows Mask Kit Fit Pack (XS,S,M,L)","hcpcs":""},{"id":"61560","name":"Swift FX Bella Nasal Pillows Mask Kit","hcpcs":""},{"id":"61543","name":"Swift FX For Her Headgear","hcpcs":""},{"id":"61540","name":"Swift FX for Her Nasal Pillows Mask Fit Pack (XS, S, M Pillows)","hcpcs":""},{"id":"61528","name":"Swift FX Frame Assembly; w/out Pillows or Hdgr","hcpcs":""},{"id":"61500","name":"Swift FX Nasal Pillows Mask Fit Pack (S,M,L)","hcpcs":""},{"id":"61513","name":"Swift FX Nasal Pillows Mask Only Size Large","hcpcs":""},{"id":"61512","name":"Swift FX Nasal Pillows Mask Only Size Medium","hcpcs":""},{"id":"61511","name":"Swift FX Nasal Pillows Mask Only Size Small","hcpcs":""},{"id":"61510","name":"Swift FX Nasal Pillows Mask Only Size X-Small","hcpcs":""},{"id":"61523","name":"Swift FX Nasal Pillows Size Large","hcpcs":""},{"id":"61522","name":"Swift FX Nasal Pillows Size Medium","hcpcs":""},{"id":"61521","name":"Swift FX Nasal Pillows Size Small","hcpcs":""},{"id":"61520","name":"Swift FX Nasal Pillows Size X-Small","hcpcs":""},{"id":"CTUB-06H15DS","name":"THERMALITE 6ft Heated Tubing for DS1/DS2","hcpcs":""},{"id":"16119","name":"Universal Headgear Large","hcpcs":""},{"id":"16118","name":"Universal Headgear Small","hcpcs":""},{"id":"VIT1LA","name":"Vitera Full Face Mask w/ Hdgr Large","hcpcs":""},{"id":"VIT1MA","name":"Vitera Full Face Mask w/ Hdgr Medium","hcpcs":""},{"id":"VIT1SA","name":"Vitera Full Face Mask w/ Hdgr Small","hcpcs":""},{"id":"400VIT122","name":"Vitera Headgear Medium/Large","hcpcs":""},{"id":"400VIT121","name":"Vitera Headgear Small","hcpcs":""},{"id":"400VIT133","name":"Vitera Mask Full Face Mask; No Headgear; Large","hcpcs":""},{"id":"400VIT132","name":"Vitera Mask Full Face Mask; No Headgear; Medium","hcpcs":""},{"id":"400VIT131","name":"Vitera Mask Full Face Mask; No Headgear; Small","hcpcs":""},{"id":"400VIT116","name":"Vitera Seal (Cushion); Large","hcpcs":""},{"id":"400VIT115","name":"Vitera Seal (Cushion); Medium","hcpcs":""},{"id":"400VIT114","name":"Vitera Seal (Cushion); Small","hcpcs":""},{"id":"1094050","name":"Wisp Fitpack with Clear Frame and Headgear; Small/Medium, Large, Extra Large Cushions","hcpcs":""},{"id":"1094051","name":"Wisp Fitpack with Fabric Frame and Headgear; Small/Medium, Large, Extra Large Cushions","hcpcs":""},{"id":"1109307","name":"Wisp Headgear Only Reduced Size","hcpcs":""},{"id":"1094078","name":"Wisp Headgear Only- Size Large","hcpcs":""},{"id":"1094082","name":"Wisp Headgear Only- Standard Size","hcpcs":""},{"id":"1094055","name":"Wisp Mask Only, Clear Frame","hcpcs":""},{"id":"1094056","name":"Wisp Mask Only, Fabric Frame","hcpcs":""},{"id":"1094088","name":"Wisp Nasal Cushion Size Large","hcpcs":""},{"id":"1094086","name":"Wisp Nasal Cushion Size Petite","hcpcs":""},{"id":"1094087","name":"Wisp Nasal Cushion Size S/M","hcpcs":""}];
+
+const inventoryRef = db.ref('inventory');
+let inventoryData = {};
+let allInventory = [];
+
+let inventorySeeded = false;
+inventoryRef.on('value', snap => {
+  inventoryData = snap.val() || {};
+  // Auto-seed from BT_LOOKUP once if inventory is empty and we haven't already seeded
+  if (!inventorySeeded && !Object.keys(inventoryData).length && typeof BT_LOOKUP !== 'undefined' && BT_LOOKUP.length) {
+    inventorySeeded = true;
+    const batch = {};
+    BT_LOOKUP.forEach((it, i) => {
+      batch['bt_' + i] = { name: it.name, btId: it.id, snapId: '', cat: it.cat || '' };
+    });
+    if (typeof SNAP_LOOKUP !== 'undefined') {
+      SNAP_LOOKUP.forEach((it, i) => {
+        const dup = BT_LOOKUP.find(b => b.name === it.name);
+        if (dup) { batch['bt_' + BT_LOOKUP.indexOf(dup)].snapId = it.id; }
+        else { batch['sn_' + i] = { name: it.name, btId: '', snapId: it.id, cat: it.cat || '' }; }
+      });
+    }
+    inventoryRef.set(batch);
+    return;
+  }
+  allInventory = Object.keys(inventoryData).map(k => ({ ...inventoryData[k], _key: k }));
+  filterInventory();
+});
+
+let editingInvKey = null;
+
+function filterInventory() {
+  const q = document.getElementById('inv-search').value.toLowerCase().trim();
+  const words = q.split(/\s+/).filter(Boolean);
+  let results = allInventory;
+  if (words.length) {
+    results = results.filter(it => {
+      const hay = ((it.name||'') + ' ' + (it.btId||'') + ' ' + (it.snapId||'') + ' ' + (it.cat||'')).toLowerCase();
+      return words.every(w => hay.includes(w));
+    });
+  }
+  renderInventory(results);
+}
+
+function renderInventory(items) {
+  const el = document.getElementById('inv-list');
+  document.getElementById('inv-count').textContent = items.length + ' of ' + allInventory.length + ' items';
+  if (!items.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px;font-size:12px">' +
+      (allInventory.length === 0 ? 'No items yet. Click + Add Item to build your inventory.' : 'No matching items') + '</div>';
+    return;
+  }
+  const show = items.slice(0, 100);
+  el.innerHTML = show.map(it => {
+    const btSafe = (it.btId||'').replace(/'/g, "\\'");
+    const snSafe = (it.snapId||'').replace(/'/g, "\\'");
+    return `
+    <div class="sp-card" onclick="openInvWindow('${it._key}')" style="cursor:pointer">
+      <div class="sp-card-title">${esc(it.name)}</div>
+      <div class="sp-card-sub" style="margin-top:4px;display:flex;flex-direction:column;gap:3px">
+        ${it.snapId ? '<span class="sp-copy" onclick="event.stopPropagation();copyId(this,\'' + snSafe + '\')" title="Click to copy SNAP ID">SNAP: ' + esc(it.snapId) + '</span>' : ''}
+        ${it.btId ? '<span class="sp-copy" onclick="event.stopPropagation();copyId(this,\'' + btSafe + '\')" title="Click to copy BT ID">BT: ' + esc(it.btId) + '</span>' : ''}
+      </div>
+    </div>`;
+  }).join('') + (items.length > 100 ? '<div class="sp-count" style="text-align:center;padding:8px">Showing 100 of ' + items.length + '</div>' : '');
+}
+
+function openInvWindow(key) {
+  const it = inventoryData[key];
+  if (!it) return;
+  const w = window.open('', '_blank', 'width=500,height=450,scrollbars=yes');
+  if (!w) { showToast('Pop-up blocked — please allow pop-ups'); return; }
+  const d = w.document;
+  d.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + esc(it.name||'') + '</title>' +
+    '<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;max-width:480px;margin:0 auto;padding:24px;color:#1e293b;background:#fff}' +
+    'h1{font-size:20px;margin-bottom:12px}.row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:14px}' +
+    '.label{color:#64748b;font-weight:500}.val{font-weight:600;cursor:pointer;color:#3b82f6}.val:hover{text-decoration:underline}' +
+    '.actions{display:flex;gap:10px;margin-top:20px;padding-top:16px;border-top:2px solid #e2e8f0}' +
+    '.btn{padding:8px 18px;border:none;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;transition:all 0.2s}' +
+    '.btn-edit{background:#3b82f6;color:#fff}.btn-edit:hover{background:#2563eb}' +
+    '.btn-del{background:#fee2e2;color:#dc2626}.btn-del:hover{background:#fecaca}' +
+    '</style></head><body>');
+  d.write('<h1>' + esc(it.name||'') + '</h1>');
+  if (it.btId) d.write('<div class="row"><span class="label">BrightTree ID</span><span class="val" id="bt-val">' + esc(it.btId) + '</span></div>');
+  if (it.snapId) d.write('<div class="row"><span class="label">SNAP ID</span><span class="val" id="sn-val">' + esc(it.snapId) + '</span></div>');
+  if (it.cat) d.write('<div class="row"><span class="label">Category</span><span>' + esc(it.cat) + '</span></div>');
+  d.write('<div class="actions"><button class="btn btn-edit" id="btn-edit">Edit</button><button class="btn btn-del" id="btn-del">Delete</button></div>');
+  d.write('</body></html>');
+  d.close();
+  // Attach events after document is closed
+  const btVal = d.getElementById('bt-val');
+  const snVal = d.getElementById('sn-val');
+  if (btVal) btVal.onclick = function() { navigator.clipboard.writeText(it.btId); btVal.textContent = 'Copied!'; setTimeout(function(){ btVal.textContent = it.btId; }, 1000); };
+  if (snVal) snVal.onclick = function() { navigator.clipboard.writeText(it.snapId); snVal.textContent = 'Copied!'; setTimeout(function(){ snVal.textContent = it.snapId; }, 1000); };
+  d.getElementById('btn-edit').onclick = function() { if (window.opener) { window.opener.editInvItem(key); w.close(); } else { alert('Parent window closed. Please reopen from the app.'); } };
+  d.getElementById('btn-del').onclick = function() { if (confirm('Delete this item? This cannot be undone.')) { if (window.opener) { window.opener.deleteInvItem(key); w.close(); } else { alert('Parent window closed.'); } } };
+}
+
+function copyId(el, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    el.classList.add('sp-copied');
+    setTimeout(() => el.classList.remove('sp-copied'), 1200);
+    showToast('Copied: ' + text);
+  }).catch(() => {
+    // Fallback for non-HTTPS contexts
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    el.classList.add('sp-copied');
+    setTimeout(() => el.classList.remove('sp-copied'), 1200);
+    showToast('Copied: ' + text);
+  });
+}
+
+function showInvAddForm() {
+  editingInvKey = null;
+  document.getElementById('inv-f-name').value = '';
+  document.getElementById('inv-f-btid').value = '';
+  document.getElementById('inv-f-snapid').value = '';
+  document.getElementById('inv-footer').style.display = 'none';
+  document.getElementById('inv-form').style.display = 'block';
+  document.getElementById('inv-f-name').focus();
+}
+
+function editInvItem(key) {
+  const it = inventoryData[key];
+  if (!it) return;
+  editingInvKey = key;
+  document.getElementById('inv-f-name').value = it.name || '';
+  document.getElementById('inv-f-btid').value = it.btId || '';
+  document.getElementById('inv-f-snapid').value = it.snapId || '';
+  document.getElementById('inv-footer').style.display = 'none';
+  document.getElementById('inv-form').style.display = 'block';
+  document.getElementById('inv-f-name').focus();
+}
+
+function saveInvItem() {
+  const name = document.getElementById('inv-f-name').value.trim();
+  const btId = document.getElementById('inv-f-btid').value.trim();
+  const snapId = document.getElementById('inv-f-snapid').value.trim();
+  if (!name) { showToast('Item name is required'); return; }
+  const data = { name, btId, snapId, updatedAt: Date.now() };
+  if (editingInvKey) {
+    // Preserve existing fields (like cat) that aren't in the form
+    const existing = inventoryData[editingInvKey] || {};
+    if (existing.cat) data.cat = existing.cat;
+    inventoryRef.child(editingInvKey).update(data);
+    showToast('Item updated');
+  } else {
+    inventoryRef.push(data);
+    showToast('Item added');
+  }
+  cancelInvForm();
+}
+
+function cancelInvForm() {
+  editingInvKey = null;
+  document.getElementById('inv-form').style.display = 'none';
+  document.getElementById('inv-footer').style.display = 'block';
+  document.getElementById('bt-lookup-dd').style.display = 'none';
+  document.getElementById('snap-lookup-dd').style.display = 'none';
+}
+
+function deleteInvItem(key) {
+  const it = inventoryData[key];
+  if (!it || !confirm('Delete "' + it.name + '"?')) return;
+  inventoryRef.child(key).remove();
+  showToast('Item deleted');
+}
+
+// BrightTree ID lookup helper
+function lookupBT() {
+  const q = document.getElementById('inv-f-btid').value.toLowerCase().trim();
+  const dd = document.getElementById('bt-lookup-dd');
+  if (q.length < 2) { dd.style.display = 'none'; return; }
+  const words = q.split(/\s+/);
+  const hits = BT_LOOKUP.filter(it => {
+    const hay = (it.id + ' ' + it.name).toLowerCase();
+    return words.every(w => hay.includes(w));
+  }).slice(0, 6);
+  if (!hits.length) { dd.style.display = 'none'; return; }
+  dd.innerHTML = hits.map((it, i) => `
+    <div class="sp-dropdown-item" onclick="pickBT(${i})">
+      <div style="font-weight:600">${esc(it.id)}</div>
+      <div class="sp-dd-sub">${esc(it.name)}</div>
+    </div>
+  `).join('');
+  dd.style.display = 'block';
+  dd._hits = hits;
+}
+
+function pickBT(i) {
+  const dd = document.getElementById('bt-lookup-dd');
+  const it = dd._hits[i];
+  document.getElementById('inv-f-btid').value = it.id;
+  if (!document.getElementById('inv-f-name').value.trim()) {
+    document.getElementById('inv-f-name').value = it.name;
+  }
+  dd.style.display = 'none';
+}
+
+// SNAP ID lookup helper
+function lookupSnap() {
+  const q = document.getElementById('inv-f-snapid').value.toLowerCase().trim();
+  const dd = document.getElementById('snap-lookup-dd');
+  if (q.length < 2) { dd.style.display = 'none'; return; }
+  const words = q.split(/\s+/);
+  const hits = SNAP_LOOKUP.filter(it => {
+    const hay = (it.id + ' ' + it.name).toLowerCase();
+    return words.every(w => hay.includes(w));
+  }).slice(0, 6);
+  if (!hits.length) { dd.style.display = 'none'; return; }
+  dd.innerHTML = hits.map((it, i) => `
+    <div class="sp-dropdown-item" onclick="pickSnap(${i})">
+      <div style="font-weight:600">${esc(it.id)}</div>
+      <div class="sp-dd-sub">${esc(it.name)}</div>
+    </div>
+  `).join('');
+  dd.style.display = 'block';
+  dd._hits = hits;
+}
+
+function pickSnap(i) {
+  const dd = document.getElementById('snap-lookup-dd');
+  const it = dd._hits[i];
+  document.getElementById('inv-f-snapid').value = it.id;
+  if (!document.getElementById('inv-f-name').value.trim()) {
+    document.getElementById('inv-f-name').value = it.name;
+  }
+  dd.style.display = 'none';
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML.replace(/"/g, '&quot;'); }
+
+// ── Tab 3: How to Guides ──
+const guidesRef = db.ref('guides');
+let guidesData = {};
+guidesRef.on('value', snap => { guidesData = snap.val() || {}; renderGuides(); });
+
+let guideBuilderSteps = [];
+let guideBuilderPdf = null;   // { file, name } for new upload
+let editingGuideKey = null;
+
+async function uploadToStorage(path, file) {
+  const ref = storage.ref(path);
+  await ref.put(file);
+  return await ref.getDownloadURL();
+}
+
+// ── Sync inventory CSVs to Firebase Storage (runs once) ──
+(async function syncInventoryCSVs() {
+  try {
+    const metaSnap = await db.ref('inventoryCSVs').once('value');
+    if (metaSnap.val()) return;
+    const btHeader = 'ItemID,ItemName,FamilyModel,SizeVariant,Category';
+    const btRows = BT_LOOKUP.map(function(r) { return [r.id, r.name, r.family||'', r.size||'', r.cat||''].map(function(v) { return '"' + v.replace(/"/g,'""') + '"'; }).join(','); });
+    const btBlob = new Blob([btHeader + '\n' + btRows.join('\n')], { type: 'text/csv' });
+    const btUrl = await uploadToStorage('inventory/BrighTree_inventory.csv', btBlob);
+    const snHeader = '"Item Code","Description","HCPCS"';
+    const snRows = SNAP_LOOKUP.map(function(r) { return [r.id, r.name, r.hcpcs||''].map(function(v) { return '"' + v.replace(/"/g,'""') + '"'; }).join(','); });
+    const snBlob = new Blob([snHeader + '\n' + snRows.join('\n')], { type: 'text/csv' });
+    const snUrl = await uploadToStorage('inventory/SNAP_inventory.csv', snBlob);
+    await db.ref('inventoryCSVs').set({
+      brightree: { url: btUrl, path: 'inventory/BrighTree_inventory.csv', name: 'BrighTree_inventory.csv' },
+      snap: { url: snUrl, path: 'inventory/SNAP_inventory.csv', name: 'SNAP_inventory.csv' }
+    });
+    console.log('Inventory CSVs synced to cloud');
+  } catch(e) { console.warn('CSV sync error:', e); }
+})();
+
+function renderGuides() {
+  const el = document.getElementById('guides-list');
+  const keys = Object.keys(guidesData);
+  if (!keys.length) { el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px;font-size:12px">No guides yet. Add one below!</div>'; return; }
+  el.innerHTML = keys.map(k => {
+    const g = guidesData[k];
+    const steps = g.steps || [];
+    const stepCount = steps.length;
+    const hasPdf = !!g.pdfUrl;
+    return `
+    <div class="sp-card" onclick="openGuideWindow('${k}')" style="cursor:pointer">
+      <div class="sp-card-title">${esc(g.title)}</div>
+      <div class="sp-card-sub">${stepCount} step${stepCount !== 1 ? 's' : ''} · Updated ${new Date(g.updatedAt).toLocaleDateString()}${hasPdf ? ' · 📎 PDF' : ''}</div>
+    </div>`;
+  }).join('');
+}
+
+function openGuideWindow(key) {
+  const g = guidesData[key];
+  if (!g) return;
+  const steps = g.steps || [];
+  const hasPdf = !!g.pdfUrl;
+  const w = window.open('', '_blank', 'width=700,height=800,scrollbars=yes');
+  if (!w) { showToast('Pop-up blocked — please allow pop-ups'); return; }
+  const d = w.document;
+  d.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + esc(g.title) + '</title>' +
+    '<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;max-width:640px;margin:0 auto;padding:24px;color:#1e293b;background:#fff}' +
+    'h1{font-size:22px;margin-bottom:4px}.meta{font-size:13px;color:#64748b;margin-bottom:20px}img{max-height:400px;max-width:100%;border-radius:8px;margin-top:6px;cursor:pointer}' +
+    '.actions{display:flex;gap:10px;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #e2e8f0}' +
+    '.btn{padding:8px 18px;border:none;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;transition:all 0.2s}' +
+    '.btn-edit{background:#3b82f6;color:#fff}.btn-edit:hover{background:#2563eb}' +
+    '.btn-del{background:#fee2e2;color:#dc2626}.btn-del:hover{background:#fecaca}' +
+    '.step{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #e2e8f0}' +
+    '.snum{min-width:32px;height:32px;border-radius:50%;background:#3b82f6;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}' +
+    '</style></head><body>');
+  d.write('<h1>' + esc(g.title) + '</h1>');
+  d.write('<div class="meta">Updated ' + new Date(g.updatedAt).toLocaleDateString() + ' · ' + steps.length + ' step' + (steps.length !== 1 ? 's' : '') + '</div>');
+  d.write('<div class="actions"><button class="btn btn-edit" id="btn-edit">Edit Guide</button><button class="btn btn-del" id="btn-del">Delete Guide</button></div>');
+  steps.forEach(function(s, i) {
+    var imgTag = s.imageUrl ? '<a href="' + esc(s.imageUrl) + '" target="_blank"><img src="' + esc(s.imageUrl) + '" alt="Step ' + (i+1) + '"></a>' : '';
+    d.write('<div class="step"><div class="snum">' + (i+1) + '</div><div style="flex:1"><div style="font-size:14px;line-height:1.5">' + esc(s.text || '') + '</div>' + imgTag + '</div></div>');
+  });
+  if (hasPdf) d.write('<div style="margin-top:16px;padding:12px;background:#f0f7ff;border-radius:8px;border:1px dashed #93c5fd"><a href="' + esc(g.pdfUrl) + '" target="_blank" style="color:#3b82f6;text-decoration:none;font-weight:600">📎 ' + esc(g.pdfName || 'Download PDF') + '</a></div>');
+  d.write('</body></html>');
+  d.close();
+  d.getElementById('btn-edit').onclick = function() { if (window.opener) { window.opener.editGuide(key); w.close(); } else { alert('Parent window closed. Please reopen from the app.'); } };
+  d.getElementById('btn-del').onclick = function() { if (confirm('Delete this guide? This cannot be undone.')) { if (window.opener) { window.opener.deleteGuide(key); w.close(); } else { alert('Parent window closed.'); } } };
+}
+
+function showGuideBuilder(key) {
+  editingGuideKey = key || null;
+  guideBuilderSteps = [];
+  guideBuilderPdf = null;
+  document.getElementById('gb-pdf-name').textContent = '';
+  document.getElementById('gb-upload-status').style.display = 'none';
+  if (key && guidesData[key]) {
+    const g = guidesData[key];
+    document.getElementById('gb-title').value = g.title || '';
+    (g.steps || []).forEach(s => guideBuilderSteps.push({ text: s.text || '', imageUrl: s.imageUrl || '', imageFile: null, imageStoragePath: s.imageStoragePath || '' }));
+    if (g.pdfUrl) document.getElementById('gb-pdf-name').textContent = g.pdfName || 'Attached PDF';
+  } else {
+    document.getElementById('gb-title').value = '';
+    guideBuilderSteps.push({ text: '', imageUrl: '', imageFile: null, imageStoragePath: '' });
+  }
+  renderBuilderSteps();
+  document.getElementById('guide-footer').style.display = 'none';
+  document.getElementById('guide-builder').style.display = '';
+}
+
+function cancelGuideBuilder() {
+  document.getElementById('guide-builder').style.display = 'none';
+  document.getElementById('guide-footer').style.display = '';
+  editingGuideKey = null;
+}
+
+function renderBuilderSteps() {
+  const el = document.getElementById('gb-steps');
+  el.innerHTML = guideBuilderSteps.map((s, i) => {
+    let imgPreview = '';
+    if (s.imageUrl && !s.imageFile) imgPreview = `<img class="sp-step-img" src="${esc(s.imageUrl)}" alt="Step ${i+1}">`;
+    if (s._preview) imgPreview = `<img class="sp-step-img" src="${s._preview}" alt="Step ${i+1}">`;
+    return `<div class="sp-step">
+      <span class="sp-step-num">${i+1}</span>
+      <div class="sp-step-body">
+        <input type="text" class="sp-search" style="margin-bottom:4px" value="${esc(s.text)}" placeholder="Step ${i+1} instructions..." oninput="guideBuilderSteps[${i}].text=this.value">
+        <div style="display:flex;align-items:center;gap:6px">
+          <label class="sp-file-btn" style="font-size:10px">📷 Image <input type="file" accept="image/*" style="display:none" onchange="onStepImageSelect(${i},this)"></label>
+          ${imgPreview}
+        </div>
+      </div>
+      <div class="sp-step-controls">
+        ${i > 0 ? `<button onclick="moveGuideStep(${i},-1)" title="Move up">▲</button>` : ''}
+        ${i < guideBuilderSteps.length - 1 ? `<button onclick="moveGuideStep(${i},1)" title="Move down">▼</button>` : ''}
+        <button onclick="removeGuideStep(${i})" title="Remove step" style="color:var(--red)">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addGuideStep() {
+  guideBuilderSteps.push({ text: '', imageUrl: '', imageFile: null, imageStoragePath: '' });
+  renderBuilderSteps();
+}
+
+function removeGuideStep(i) {
+  guideBuilderSteps.splice(i, 1);
+  renderBuilderSteps();
+}
+
+function moveGuideStep(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= guideBuilderSteps.length) return;
+  [guideBuilderSteps[i], guideBuilderSteps[j]] = [guideBuilderSteps[j], guideBuilderSteps[i]];
+  renderBuilderSteps();
+}
+
+function onStepImageSelect(i, input) {
+  const file = input.files[0];
+  if (!file) return;
+  guideBuilderSteps[i].imageFile = file;
+  const reader = new FileReader();
+  reader.onload = e => { guideBuilderSteps[i]._preview = e.target.result; renderBuilderSteps(); };
+  reader.readAsDataURL(file);
+}
+
+function attachGuidePdf(input) {
+  const file = input.files[0];
+  if (!file) return;
+  guideBuilderPdf = { file, name: file.name };
+  document.getElementById('gb-pdf-name').textContent = file.name;
+}
+
+async function saveGuide() {
+  const title = document.getElementById('gb-title').value.trim();
+  if (!title) { showToast('Guide title is required'); return; }
+  if (!guideBuilderSteps.length || !guideBuilderSteps.some(s => s.text.trim())) { showToast('Add at least one step with text'); return; }
+
+  const statusEl = document.getElementById('gb-upload-status');
+  statusEl.style.display = '';
+  statusEl.textContent = 'Saving...';
+
+  try {
+    const key = editingGuideKey || guidesRef.push().key;
+    const steps = [];
+
+    // Upload step images
+    for (let i = 0; i < guideBuilderSteps.length; i++) {
+      const s = guideBuilderSteps[i];
+      let imageUrl = s.imageUrl || '';
+      let imageStoragePath = s.imageStoragePath || '';
+      if (s.imageFile) {
+        const ext = s.imageFile.name.split('.').pop();
+        const path = `guides/${key}/step-${i}.${ext}`;
+        statusEl.textContent = `Uploading image ${i+1}...`;
+        imageUrl = await uploadToStorage(path, s.imageFile);
+        imageStoragePath = path;
+      }
+      steps.push({ text: s.text.trim(), imageUrl, imageStoragePath });
+    }
+
+    // Upload PDF if new
+    let pdfUrl = (editingGuideKey && guidesData[editingGuideKey]) ? (guidesData[editingGuideKey].pdfUrl || '') : '';
+    let pdfName = (editingGuideKey && guidesData[editingGuideKey]) ? (guidesData[editingGuideKey].pdfName || '') : '';
+    let pdfStoragePath = (editingGuideKey && guidesData[editingGuideKey]) ? (guidesData[editingGuideKey].pdfStoragePath || '') : '';
+
+    if (guideBuilderPdf) {
+      const path = `guides/${key}/guide.pdf`;
+      statusEl.textContent = 'Uploading PDF...';
+      pdfUrl = await uploadToStorage(path, guideBuilderPdf.file);
+      pdfName = guideBuilderPdf.name;
+      pdfStoragePath = path;
+    }
+
+    statusEl.textContent = 'Saving to database...';
+    await guidesRef.child(key).set({ title, steps, pdfUrl, pdfName, pdfStoragePath, updatedAt: Date.now() });
+
+    cancelGuideBuilder();
+    showToast('📖 Guide saved!');
+  } catch (err) {
+    console.error('Save guide error:', err);
+    statusEl.textContent = 'Error: ' + err.message;
+  }
+}
+
+function editGuide(key) {
+  showGuideBuilder(key);
+}
+
+async function deleteGuide(key) {
+  const g = guidesData[key];
+  if (!g) return;
+  try {
+    // Delete storage files
+    const paths = [];
+    if (g.pdfStoragePath) paths.push(g.pdfStoragePath);
+    (g.steps || []).forEach(s => { if (s.imageStoragePath) paths.push(s.imageStoragePath); });
+    for (const p of paths) {
+      try { await storage.ref(p).delete(); } catch (e) { console.warn('Storage delete skip:', p, e.code); }
+    }
+    await guidesRef.child(key).remove();
+    showToast('Guide deleted');
+  } catch (err) {
+    console.error('Delete guide error:', err);
+    showToast('Error deleting guide');
+  }
+}
+
+// ── Tab 4: Common Orders ──
+const ordersRef = db.ref('commonOrders');
+let ordersData = {};
+ordersRef.on('value', snap => { ordersData = snap.val() || {}; renderOrders(); });
+
+let orderBuilderItems = [];
+let editingOrderKey = null;
+
+function renderOrders() {
+  const el = document.getElementById('orders-list');
+  const keys = Object.keys(ordersData);
+  if (!keys.length) { el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px;font-size:12px">No order templates yet.</div>'; return; }
+  el.innerHTML = keys.map(k => {
+    const o = ordersData[k];
+    const itemsHtml = (o.items || []).map(it => {
+      const btE = (it.btId || '').replace(/'/g, "\\'");
+      const snE = (it.snapId || '').replace(/'/g, "\\'");
+      return `
+      <div class="sp-order-item">
+        <span class="qty">x${it.quantity}</span>
+        <span style="flex:1">${esc(it.name)}</span>
+        ${it.btId ? `<span class="sp-copy" onclick="event.stopPropagation();copyId(this,'${btE}')" title="Copy BT ID">${esc(it.btId)}</span>` : ''}
+        ${it.snapId ? `<span class="sp-copy" onclick="event.stopPropagation();copyId(this,'${snE}')" title="Copy SNAP ID">${esc(it.snapId)}</span>` : ''}
+      </div>`;
+    }).join('');
+    return `
+    <div class="sp-card" onclick="this.classList.toggle('expanded')">
+      <div class="sp-card-title">${esc(o.name)}</div>
+      <div class="sp-card-sub">${(o.items||[]).length} item(s)${o.notes ? ' · ' + esc(o.notes) : ''}</div>
+      <div class="sp-guide-content"><div class="sp-order-items">${itemsHtml}</div></div>
+      <div class="sp-card-actions">
+        <button onclick="event.stopPropagation();editOrderTemplate('${k}')" title="Edit">✏️</button>
+        <button class="sp-del" onclick="event.stopPropagation();deleteOrder('${k}')" title="Delete">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showOrderBuilder() {
+  editingOrderKey = null;
+  orderBuilderItems = [];
+  document.getElementById('ord-b-name').value = '';
+  document.getElementById('ord-b-notes').value = '';
+  document.getElementById('ord-b-search').value = '';
+  document.getElementById('ord-b-results').style.display = 'none';
+  renderOrderBuilderItems();
+  document.getElementById('ord-footer').style.display = 'none';
+  document.getElementById('ord-builder').style.display = 'block';
+  document.getElementById('ord-b-name').focus();
+}
+
+function editOrderTemplate(key) {
+  const o = ordersData[key];
+  if (!o) return;
+  editingOrderKey = key;
+  orderBuilderItems = (o.items || []).map(it => ({ ...it }));
+  document.getElementById('ord-b-name').value = o.name || '';
+  document.getElementById('ord-b-notes').value = o.notes || '';
+  document.getElementById('ord-b-search').value = '';
+  document.getElementById('ord-b-results').style.display = 'none';
+  renderOrderBuilderItems();
+  document.getElementById('ord-footer').style.display = 'none';
+  document.getElementById('ord-builder').style.display = 'block';
+}
+
+function cancelOrderBuilder() {
+  editingOrderKey = null;
+  orderBuilderItems = [];
+  document.getElementById('ord-builder').style.display = 'none';
+  document.getElementById('ord-footer').style.display = 'block';
+}
+
+function renderOrderBuilderItems() {
+  const el = document.getElementById('ord-b-items');
+  if (!orderBuilderItems.length) {
+    el.innerHTML = '<div style="font-size:11px;color:var(--muted);padding:8px;text-align:center">No items yet — search below to add</div>';
+    return;
+  }
+  el.innerHTML = orderBuilderItems.map((it, i) => `
+    <div class="sp-ob-item">
+      <input type="number" min="1" value="${it.quantity}" onchange="orderBuilderItems[${i}].quantity=parseInt(this.value)||1">
+      <span class="sp-ob-name" title="${esc(it.btId || '')}">${esc(it.name)}</span>
+      <span class="sp-ob-rm" onclick="orderBuilderItems.splice(${i},1);renderOrderBuilderItems()">✕</span>
+    </div>
+  `).join('');
+}
+
+let _ordSearchTimer;
+function orderSearchInventory() {
+  clearTimeout(_ordSearchTimer);
+  _ordSearchTimer = setTimeout(_doOrderSearch, 150);
+}
+
+function _doOrderSearch() {
+  const q = document.getElementById('ord-b-search').value.toLowerCase().trim();
+  const dd = document.getElementById('ord-b-results');
+  if (!q) { dd.style.display = 'none'; return; }
+  const words = q.split(/\s+/);
+  const results = allInventory.filter(it => {
+    const hay = (it.btId + ' ' + it.name + ' ' + (it.snapId || '')).toLowerCase();
+    return words.every(w => hay.includes(w));
+  }).slice(0, 8);
+  if (!results.length) { dd.innerHTML = '<div class="sp-dropdown-item" style="color:var(--muted)">No matches</div>'; dd.style.display = 'block'; return; }
+  dd.innerHTML = results.map((it, i) => `
+    <div class="sp-dropdown-item" onclick="addToOrderBuilder(${i})">
+      <div>${esc(it.name)}</div>
+      <div class="sp-dd-sub">${esc(it.btId)}${it.snapId ? ' · SNAP: ' + esc(it.snapId) : ''}</div>
+    </div>
+  `).join('');
+  dd.style.display = 'block';
+  dd._results = results;
+}
+
+function addToOrderBuilder(idx) {
+  const dd = document.getElementById('ord-b-results');
+  const it = dd._results[idx];
+  if (!it) return;
+  const existing = orderBuilderItems.find(x => x.btId === it.btId && x.name === it.name);
+  if (existing) { existing.quantity++; }
+  else { orderBuilderItems.push({ name: it.name, btId: it.btId, snapId: it.snapId || '', quantity: 1 }); }
+  renderOrderBuilderItems();
+  document.getElementById('ord-b-search').value = '';
+  dd.style.display = 'none';
+  showToast('Added ' + it.name);
+}
+
+function saveOrderTemplate() {
+  const name = document.getElementById('ord-b-name').value.trim();
+  if (!name) { showToast('Template name required'); return; }
+  if (!orderBuilderItems.length) { showToast('Add at least one item'); return; }
+  const notes = document.getElementById('ord-b-notes').value.trim();
+  const data = { name, items: orderBuilderItems, notes, updatedAt: Date.now() };
+  if (editingOrderKey) {
+    ordersRef.child(editingOrderKey).set(data);
+    showToast('Template updated');
+  } else {
+    ordersRef.push(data);
+    showToast('Template created');
+  }
+  cancelOrderBuilder();
+}
+
+function deleteOrder(key) {
+  const o = ordersData[key];
+  if (!o || !confirm('Delete "' + o.name + '"?')) return;
+  ordersRef.child(key).remove();
+  showToast('Template deleted');
 }
 
 // ── Init ──
