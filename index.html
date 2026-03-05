@@ -935,6 +935,11 @@
       <label>Call Duration</label>
       <input type="number" id="cfg-call" value="20" min="5" max="60" step="5"> <span style="color:var(--muted);font-size:12px">min</span>
     </div>
+    <div class="config-divider"></div>
+    <div class="config-group">
+      <label>Date</label>
+      <input type="date" id="cfg-date" style="width:150px" onchange="switchDate(this.value)">
+    </div>
   </div>
 
   <!-- Team Stats Cards -->
@@ -1033,12 +1038,12 @@ function getTodayKey() {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
-const todayRef = db.ref('days/' + getTodayKey());
-const agentsRef = todayRef.child('agents');
-const configRef = todayRef.child('config');
-const counterRef = todayRef.child('nextId');
-
-const incomingRef = todayRef.child('incomingCalls');
+let currentDateKey = getTodayKey();
+let todayRef = db.ref('days/' + currentDateKey);
+let agentsRef = todayRef.child('agents');
+let configRef = todayRef.child('config');
+let counterRef = todayRef.child('nextId');
+let incomingRef = todayRef.child('incomingCalls');
 
 // ── State ──
 let agents = [];
@@ -1100,44 +1105,7 @@ function syncConfigToFirebase() {
 }
 
 // ── Firebase Sync (listen for changes from others) ──
-agentsRef.on('value', snap => {
-  const data = snap.val();
-  if (!data) return;
-  suppressSync = true;
-  agents = data.map(a => ({
-    id: a.id, name: a.name || '', office: a.office || 0, field: a.field || 0,
-    actual: a.actual || 0, target: a.target || 0,
-    _unlocked: a._unlocked || {}
-  }));
-  renderTable();
-  suppressSync = false;
-});
-
-counterRef.on('value', snap => {
-  const val = snap.val();
-  if (val && val > nextId) nextId = val;
-});
-
-configRef.on('value', snap => {
-  const cfg = snap.val();
-  if (!cfg) return;
-  suppressSync = true;
-  document.getElementById('cfg-hours').value = cfg.workDay;
-  document.getElementById('cfg-office').value = cfg.officeTime;
-  document.getElementById('cfg-field').value = cfg.fieldTime;
-  document.getElementById('cfg-call').value = cfg.callMin;
-  renderTable();
-  suppressSync = false;
-});
-
-incomingRef.on('value', snap => {
-  const val = snap.val();
-  if (val !== null) {
-    incomingCalls = val;
-    document.getElementById('stat-incoming').value = val;
-    updateHeaderCoverage();
-  }
-});
+attachListeners();
 
 // ── Connection status ──
 const connRef = db.ref('.info/connected');
@@ -1146,6 +1114,84 @@ connRef.on('value', snap => {
   document.getElementById('hdr-pct').parentElement.querySelector('.lbl').textContent =
     snap.val() ? 'Calls Covered % ' + dot : 'OFFLINE ' + dot;
 });
+
+// ── Switch Date ──
+function switchDate(dateStr) {
+  // Detach old listeners
+  agentsRef.off();
+  configRef.off();
+  counterRef.off();
+  incomingRef.off();
+
+  // Update refs
+  currentDateKey = dateStr;
+  todayRef = db.ref('days/' + currentDateKey);
+  agentsRef = todayRef.child('agents');
+  configRef = todayRef.child('config');
+  counterRef = todayRef.child('nextId');
+  incomingRef = todayRef.child('incomingCalls');
+
+  // Reset local state
+  agents = [];
+  nextId = 1;
+  incomingCalls = 0;
+  document.getElementById('stat-incoming').value = 0;
+
+  // Re-attach listeners
+  attachListeners();
+}
+
+function attachListeners() {
+  agentsRef.on('value', snap => {
+    const data = snap.val();
+    if (!data) {
+      // No data for this date — show empty
+      if (agents.length === 0) {
+        for (let i = 0; i < 5; i++) {
+          agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, _unlocked: {} });
+        }
+        syncToFirebase();
+        syncConfigToFirebase();
+      }
+      renderTable();
+      return;
+    }
+    suppressSync = true;
+    agents = data.map(a => ({
+      id: a.id, name: a.name || '', office: a.office || 0, field: a.field || 0,
+      actual: a.actual || 0, target: a.target || 0,
+      _unlocked: a._unlocked || {}
+    }));
+    renderTable();
+    suppressSync = false;
+  });
+
+  counterRef.on('value', snap => {
+    const val = snap.val();
+    if (val && val > nextId) nextId = val;
+  });
+
+  configRef.on('value', snap => {
+    const cfg = snap.val();
+    if (!cfg) return;
+    suppressSync = true;
+    document.getElementById('cfg-hours').value = cfg.workDay;
+    document.getElementById('cfg-office').value = cfg.officeTime;
+    document.getElementById('cfg-field').value = cfg.fieldTime;
+    document.getElementById('cfg-call').value = cfg.callMin;
+    renderTable();
+    suppressSync = false;
+  });
+
+  incomingRef.on('value', snap => {
+    const val = snap.val();
+    if (val !== null) {
+      incomingCalls = val;
+      document.getElementById('stat-incoming').value = val;
+      updateHeaderCoverage();
+    }
+  });
+}
 
 // ── Incoming Calls ──
 function updateIncoming(val) {
@@ -1428,15 +1474,7 @@ function updateClock() {
 });
 
 // ── Init ──
-// Firebase listeners above will populate data when connected.
-// If no data exists yet, seed with 5 empty agents after a short delay.
-setTimeout(() => {
-  if (agents.length === 0) {
-    for (let i = 0; i < 5; i++) addAgent();
-    syncConfigToFirebase();
-  }
-}, 2000);
-
+document.getElementById('cfg-date').value = currentDateKey;
 renderTable();
 updateClock();
 setInterval(updateClock, 1000);
