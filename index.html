@@ -1145,13 +1145,9 @@ function attachListeners() {
   agentsRef.on('value', snap => {
     const data = snap.val();
     if (!data) {
-      // No data for this date — show empty
+      // No data for this date — carry forward agent names from previous day
       if (agents.length === 0) {
-        for (let i = 0; i < 5; i++) {
-          agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, _unlocked: {} });
-        }
-        syncToFirebase();
-        syncConfigToFirebase();
+        carryForwardAgents();
       }
       renderTable();
       return;
@@ -1191,6 +1187,48 @@ function attachListeners() {
       updateHeaderCoverage();
     }
   });
+}
+
+// ── Carry Forward Agents from Previous Day ──
+function carryForwardAgents() {
+  // Look back up to 7 days to find the most recent day with data
+  const current = new Date(currentDateKey + 'T00:00:00');
+  let attempts = 7;
+
+  function tryPrevDay(date, remaining) {
+    if (remaining <= 0) {
+      // No previous data found — start with 5 empty slots
+      for (let i = 0; i < 5; i++) {
+        agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, _unlocked: {} });
+      }
+      syncToFirebase();
+      syncConfigToFirebase();
+      renderTable();
+      return;
+    }
+
+    const prev = new Date(date);
+    prev.setDate(prev.getDate() - 1);
+    const prevKey = `${prev.getFullYear()}-${String(prev.getMonth()+1).padStart(2,'0')}-${String(prev.getDate()).padStart(2,'0')}`;
+
+    db.ref('days/' + prevKey + '/agents').once('value', snap => {
+      const prevData = snap.val();
+      if (prevData) {
+        // Found previous day — carry names, reset stats
+        agents = prevData.map(a => ({
+          id: a.id, name: a.name || '', office: 0, field: 0, actual: 0, target: 0, _unlocked: {}
+        }));
+        nextId = Math.max(...agents.map(a => a.id)) + 1;
+        syncToFirebase();
+        syncConfigToFirebase();
+        renderTable();
+      } else {
+        tryPrevDay(prev, remaining - 1);
+      }
+    });
+  }
+
+  tryPrevDay(current, attempts);
 }
 
 // ── Incoming Calls ──
@@ -1472,6 +1510,17 @@ function updateClock() {
     syncConfigToFirebase();
   });
 });
+
+// ── Midnight Auto-Reset ──
+setInterval(() => {
+  const newKey = getTodayKey();
+  if (newKey !== currentDateKey && document.getElementById('cfg-date').value === currentDateKey) {
+    // It's a new day and we're viewing the current day — auto-switch
+    document.getElementById('cfg-date').value = newKey;
+    switchDate(newKey);
+    showToast('🌅 New day! Agent names carried over, stats reset.');
+  }
+}, 30000); // check every 30 seconds
 
 // ── Init ──
 document.getElementById('cfg-date').value = currentDateKey;
