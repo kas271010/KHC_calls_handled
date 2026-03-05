@@ -846,6 +846,19 @@
     line-height: 1;
   }
 
+  .last-call-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+    text-align: center;
+    transition: color 0.3s;
+  }
+
+  .last-call-time.recent {
+    color: var(--green);
+  }
+
   /* Responsive */
   @media (max-width: 1200px) {
     .panels { grid-template-columns: 1fr; }
@@ -1089,6 +1102,7 @@ function syncToFirebase() {
   const cleanAgents = agents.map(a => ({
     id: a.id, name: a.name, office: a.office, field: a.field,
     actual: a.actual, target: a.target || 0,
+    lastCall: a.lastCall || '',
     _unlocked: a._unlocked || {}
   }));
   agentsRef.set(cleanAgents);
@@ -1156,6 +1170,7 @@ function attachListeners() {
     agents = data.map(a => ({
       id: a.id, name: a.name || '', office: a.office || 0, field: a.field || 0,
       actual: a.actual || 0, target: a.target || 0,
+      lastCall: a.lastCall || '',
       _unlocked: a._unlocked || {}
     }));
     renderTable();
@@ -1199,7 +1214,7 @@ function carryForwardAgents() {
     if (remaining <= 0) {
       // No previous data found — start with 5 empty slots
       for (let i = 0; i < 5; i++) {
-        agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, _unlocked: {} });
+        agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', _unlocked: {} });
       }
       syncToFirebase();
       syncConfigToFirebase();
@@ -1216,7 +1231,7 @@ function carryForwardAgents() {
       if (prevData) {
         // Found previous day — carry names, reset stats
         agents = prevData.map(a => ({
-          id: a.id, name: a.name || '', office: 0, field: 0, actual: 0, target: 0, _unlocked: {}
+          id: a.id, name: a.name || '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', _unlocked: {}
         }));
         nextId = Math.max(...agents.map(a => a.id)) + 1;
         syncToFirebase();
@@ -1269,6 +1284,7 @@ function renderTable() {
           <span class="call-count-display">${agent.actual}</span>
           <button class="tally-btn" onclick="tallyCall(this,${agent.id})" title="Log a call!">+1</button>
         </div>
+        <div class="last-call-time ${agent.lastCall ? 'recent' : ''}">${agent.lastCall ? '⏱ ' + agent.lastCall : ''}</div>
       </td>
       <td class="progress-cell">
         <div class="progress-bar-wrap">
@@ -1352,6 +1368,7 @@ function tallyCall(btnEl, id) {
   btnEl.appendChild(plus);
   setTimeout(() => plus.remove(), 800);
 
+  agent.lastCall = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   updateAgent(id, 'actual', agent.actual + 1);
 }
 
@@ -1363,7 +1380,7 @@ function tallyMinus(id) {
 
 // ── Add/Remove Agent ──
 function addAgent() {
-  agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, _unlocked: {} });
+  agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', _unlocked: {} });
   renderTable();
   syncToFirebase();
   setTimeout(() => {
