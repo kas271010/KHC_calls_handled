@@ -1158,17 +1158,28 @@ function compute(agent) {
 }
 
 // ── Firebase Sync (write) ──
-function syncToFirebase() {
-  if (suppressSync) return;
-  const cleanAgents = agents.map(a => ({
+function cleanAgent(a) {
+  return {
     id: a.id, name: a.name, office: a.office, field: a.field,
     actual: a.actual, target: a.target || 0,
     lastCall: a.lastCall || '',
     activity: a.activity || 'Available', activityNote: a.activityNote || '',
     _unlocked: a._unlocked || {}
-  }));
-  agentsRef.set(cleanAgents);
+  };
+}
+
+function syncToFirebase() {
+  if (suppressSync) return;
+  agentsRef.set(agents.map(cleanAgent));
   counterRef.set(nextId);
+}
+
+// Sync only a single agent's data (prevents race conditions)
+function syncAgentToFirebase(id) {
+  if (suppressSync) return;
+  const idx = agents.findIndex(a => a.id === id);
+  if (idx === -1) return;
+  agentsRef.child(idx).set(cleanAgent(agents[idx]));
 }
 
 function syncConfigToFirebase() {
@@ -1413,7 +1424,7 @@ function updateAgent(id, field, value) {
   }
 
   renderTable();
-  syncToFirebase();
+  syncAgentToFirebase(id);
 }
 
 // ── Activity Status ──
@@ -1432,7 +1443,7 @@ function changeActivity(id, value) {
   agent.activity = value;
   if (value !== 'Other') agent.activityNote = '';
   renderTable();
-  syncToFirebase();
+  syncAgentToFirebase(id);
 }
 
 // ── Tally Button ──
