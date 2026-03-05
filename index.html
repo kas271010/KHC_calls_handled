@@ -1511,7 +1511,7 @@ function saveData() {
 // ── Reset Day ──
 function resetDay() {
   if (!confirm('Reset all call counts for today? Agent names are kept.')) return;
-  agents.forEach(a => { a.actual = 0; a.office = 0; a.field = 0; a._unlocked = {}; });
+  agents.forEach(a => { a.actual = 0; a.office = 0; a.field = 0; a.lastCall = ''; a._unlocked = {}; });
   renderTable();
   syncToFirebase();
   showToast('↻ Day reset — fresh start!');
