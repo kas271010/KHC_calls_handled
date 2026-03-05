@@ -390,45 +390,6 @@
     margin-top: 2px;
   }
 
-  .status-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .status-crushing {
-    background: rgba(16,185,129,0.15);
-    color: #34d399;
-    border: 1px solid rgba(16,185,129,0.3);
-    animation: statusGlow 2s ease-in-out infinite;
-  }
-
-  @keyframes statusGlow {
-    0%, 100% { box-shadow: 0 0 5px rgba(16,185,129,0.2); }
-    50% { box-shadow: 0 0 15px rgba(16,185,129,0.4); }
-  }
-
-  .status-ontrack {
-    background: rgba(59,130,246,0.15);
-    color: #60a5fa;
-    border: 1px solid rgba(59,130,246,0.3);
-  }
-
-  .status-behind {
-    background: rgba(245,158,11,0.15);
-    color: #fbbf24;
-    border: 1px solid rgba(245,158,11,0.3);
-  }
-
-  .status-idle {
-    background: rgba(148,163,184,0.1);
-    color: #64748b;
-    border: 1px solid rgba(148,163,184,0.2);
-  }
 
   /* Bottom panels */
   .panels {
@@ -1159,8 +1120,8 @@ function compute(agent) {
 // ── Firebase Sync (write) ──
 function cleanAgent(a) {
   return {
-    id: a.id, name: a.name, office: a.office, field: a.field,
-    actual: a.actual, target: a.target || 0,
+    id: a.id, name: a.name || '', office: a.office || 0, field: a.field || 0,
+    actual: a.actual || 0, target: a.target || 0,
     lastCall: a.lastCall || '',
     activity: a.activity || 'Available', activityNote: a.activityNote || '',
     _unlocked: a._unlocked || {}
@@ -1178,6 +1139,7 @@ function syncAgentToFirebase(id) {
   if (suppressSync) return;
   const idx = agents.findIndex(a => a.id === id);
   if (idx === -1) return;
+  markRecentWrite(id);
   agentsRef.child(idx).set(cleanAgent(agents[idx]));
 }
 
@@ -1227,7 +1189,33 @@ function switchDate(dateStr) {
   attachListeners();
 }
 
+// Track recently written agent IDs to ignore echoes
+const recentWrites = {};
+
+function markRecentWrite(id) {
+  recentWrites[id] = Date.now();
+}
+
+function isRecentWrite(id) {
+  const t = recentWrites[id];
+  if (!t) return false;
+  if (Date.now() - t < 2000) return true; // 2 second window
+  delete recentWrites[id];
+  return false;
+}
+
+function parseAgent(a) {
+  return {
+    id: a.id, name: a.name || '', office: a.office || 0, field: a.field || 0,
+    actual: a.actual || 0, target: a.target || 0,
+    lastCall: a.lastCall || '',
+    activity: a.activity || 'Available', activityNote: a.activityNote || '',
+    _unlocked: a._unlocked || {}
+  };
+}
+
 function attachListeners() {
+  // Full load — only used for initial load and structural changes (add/remove agent)
   agentsRef.on('value', snap => {
     const data = snap.val();
     if (!data) {
@@ -1238,20 +1226,29 @@ function attachListeners() {
       return;
     }
 
-    // Compare incoming data with local — skip re-render if identical
-    const incoming = data.map(a => ({
-      id: a.id, name: a.name || '', office: a.office || 0, field: a.field || 0,
-      actual: a.actual || 0, target: a.target || 0,
-      lastCall: a.lastCall || '',
-      activity: a.activity || 'Available', activityNote: a.activityNote || '',
-      _unlocked: a._unlocked || {}
-    }));
-    const localClean = agents.map(a => cleanAgent(a));
-    if (JSON.stringify(incoming) === JSON.stringify(localClean) && agents.length > 0) return;
+    // If agent count changed (add/remove), do full reload
+    if (data.length !== agents.length) {
+      suppressSync = true;
+      agents = data.map(parseAgent);
+      renderTable();
+      suppressSync = false;
+      return;
+    }
 
+    // Otherwise, merge per-agent — skip agents we recently wrote
+    let needsRender = false;
     suppressSync = true;
-    agents = incoming;
-    renderTable();
+    data.forEach((incoming, idx) => {
+      const parsed = parseAgent(incoming);
+      if (isRecentWrite(parsed.id)) return; // skip our own echo
+
+      const local = agents[idx];
+      if (!local || JSON.stringify(cleanAgent(local)) !== JSON.stringify(cleanAgent(parsed))) {
+        agents[idx] = parsed;
+        needsRender = true;
+      }
+    });
+    if (needsRender) renderTable();
     suppressSync = false;
   });
 
@@ -1393,16 +1390,6 @@ function getProgressColor(pct, target) {
   if (pct >= 70)  return '#3b82f6';
   if (pct >= 40)  return '#f59e0b';
   return '#ef4444';
-}
-
-function getStatusBadge(pct, target, actual) {
-  if (target === 0 && actual > 0) return '<span class="status-badge status-crushing">⭐ Bonus Calls</span>';
-  if (target === 0) return '<span class="status-badge status-ontrack">✓ In Field</span>';
-  if (pct > 100) return '<span class="status-badge status-crushing">🏆 Crushing +' + (actual - target) + '</span>';
-  if (pct === 100) return '<span class="status-badge status-crushing">🏆 Target Hit</span>';
-  if (pct >= 70)  return '<span class="status-badge status-ontrack">✓ On Track</span>';
-  if (pct >= 1)   return '<span class="status-badge status-behind">⚠ Behind</span>';
-  return '<span class="status-badge status-idle">— Idle</span>';
 }
 
 // ── Update Agent ──
