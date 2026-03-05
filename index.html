@@ -1060,7 +1060,6 @@
           <th>Target Calls</th>
           <th>Calls Taken</th>
           <th style="width:180px">Progress</th>
-          <th>Status</th>
         </tr>
       </thead>
       <tbody id="agent-body">
@@ -1379,7 +1378,6 @@ function renderTable() {
         </div>
         <div class="progress-pct" style="color:${getProgressColor(c.pct, c.target)}">${c.target === 0 ? (agent.actual > 0 ? '+' + agent.actual + ' bonus' : 'N/A') : c.pct + '%'}</div>
       </td>
-      <td>${getStatusBadge(c.pct, c.target, agent.actual)}</td>
     `;
     tbody.appendChild(tr);
   });
