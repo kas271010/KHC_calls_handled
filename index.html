@@ -1123,7 +1123,7 @@ function cleanAgent(a) {
     id: a.id, name: a.name || '', office: a.office || 0, field: a.field || 0,
     actual: a.actual || 0, target: a.target || 0,
     lastCall: a.lastCall || '',
-    activity: a.activity || 'Available', activityNote: a.activityNote || '',
+    activity: a.activity || 'Available', activityNote: a.activityNote || '', activityTime: a.activityTime || '',
     _unlocked: a._unlocked || {}
   };
 }
@@ -1209,7 +1209,7 @@ function parseAgent(a) {
     id: a.id, name: a.name || '', office: a.office || 0, field: a.field || 0,
     actual: a.actual || 0, target: a.target || 0,
     lastCall: a.lastCall || '',
-    activity: a.activity || 'Available', activityNote: a.activityNote || '',
+    activity: a.activity || 'Available', activityNote: a.activityNote || '', activityTime: a.activityTime || '',
     _unlocked: a._unlocked || {}
   };
 }
@@ -1289,7 +1289,7 @@ function carryForwardAgents() {
     if (remaining <= 0) {
       // No previous data found — start with 5 empty slots
       for (let i = 0; i < 5; i++) {
-        agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', activity: 'Available', activityNote: '', _unlocked: {} });
+        agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', activity: 'Available', activityNote: '', activityTime: '', _unlocked: {} });
       }
       syncToFirebase();
       syncConfigToFirebase();
@@ -1306,7 +1306,7 @@ function carryForwardAgents() {
       if (prevData) {
         // Found previous day — carry names, reset stats
         agents = prevData.map(a => ({
-          id: a.id, name: a.name || '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', activity: 'Available', activityNote: '', _unlocked: {}
+          id: a.id, name: a.name || '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', activity: 'Available', activityNote: '', activityTime: '', _unlocked: {}
         }));
         nextId = Math.max(...agents.map(a => a.id)) + 1;
         syncToFirebase();
@@ -1355,6 +1355,7 @@ function renderTable() {
           ).join('')}
         </select>
         ${(agent.activity === 'Other') ? `<input class="other-input" placeholder="Type status..." value="${agent.activityNote || ''}" onchange="updateAgent(${agent.id},'activityNote',this.value)">` : ''}
+        ${agent.activityTime ? `<div class="last-call-time recent" style="margin-top:3px">⏱ ${agent.activityTime}</div>` : ''}
       </td>
       <td><input class="num-input setup-input" type="number" min="0" max="10" value="${agent.office}" onchange="updateAgent(${agent.id},'office',+this.value)"></td>
       <td><input class="num-input setup-input" type="number" min="0" max="10" value="${agent.field}" onchange="updateAgent(${agent.id},'field',+this.value)"></td>
@@ -1432,6 +1433,7 @@ function changeActivity(id, value) {
   const agent = agents.find(a => a.id === id);
   if (!agent) return;
   agent.activity = value;
+  agent.activityTime = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   if (value !== 'Other') agent.activityNote = '';
   renderTable();
   syncAgentToFirebase(id);
@@ -1471,7 +1473,7 @@ function tallyMinus(id) {
 
 // ── Add/Remove Agent ──
 function addAgent() {
-  agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', activity: 'Available', activityNote: '', _unlocked: {} });
+  agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', activity: 'Available', activityNote: '', activityTime: '', _unlocked: {} });
   renderTable();
   syncToFirebase();
   setTimeout(() => {
@@ -1597,7 +1599,7 @@ function saveData() {
 // ── Reset Day ──
 function resetDay() {
   if (!confirm('Reset all call counts for today? Agent names are kept.')) return;
-  agents.forEach(a => { a.actual = 0; a.office = 0; a.field = 0; a.lastCall = ''; a.activity = 'Available'; a.activityNote = ''; a._unlocked = {}; });
+  agents.forEach(a => { a.actual = 0; a.office = 0; a.field = 0; a.lastCall = ''; a.activity = 'Available'; a.activityNote = ''; a.activityTime = ''; a._unlocked = {}; });
   renderTable();
   syncToFirebase();
   showToast('↻ Day reset — fresh start!');
