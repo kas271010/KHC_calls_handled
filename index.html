@@ -1232,20 +1232,26 @@ function attachListeners() {
   agentsRef.on('value', snap => {
     const data = snap.val();
     if (!data) {
-      // No data for this date — carry forward agent names from previous day
       if (agents.length === 0) {
         carryForwardAgents();
       }
       renderTable();
       return;
     }
-    suppressSync = true;
-    agents = data.map(a => ({
+
+    // Compare incoming data with local — skip re-render if identical
+    const incoming = data.map(a => ({
       id: a.id, name: a.name || '', office: a.office || 0, field: a.field || 0,
       actual: a.actual || 0, target: a.target || 0,
       lastCall: a.lastCall || '',
+      activity: a.activity || 'Available', activityNote: a.activityNote || '',
       _unlocked: a._unlocked || {}
     }));
+    const localClean = agents.map(a => cleanAgent(a));
+    if (JSON.stringify(incoming) === JSON.stringify(localClean) && agents.length > 0) return;
+
+    suppressSync = true;
+    agents = incoming;
     renderTable();
     suppressSync = false;
   });
