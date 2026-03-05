@@ -846,6 +846,61 @@
     line-height: 1;
   }
 
+  /* Agent Status Selector */
+  .status-select {
+    background: var(--primary);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 130px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 24px;
+  }
+
+  .status-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(59,130,246,0.2);
+  }
+
+  .status-select.s-available { border-color: rgba(16,185,129,0.5); color: #34d399; }
+  .status-select.s-office { border-color: rgba(139,92,246,0.5); color: #a78bfa; }
+  .status-select.s-field { border-color: rgba(59,130,246,0.5); color: #60a5fa; }
+  .status-select.s-shipping { border-color: rgba(245,158,11,0.5); color: #fbbf24; }
+  .status-select.s-meeting { border-color: rgba(236,72,153,0.5); color: #f472b6; }
+  .status-select.s-break { border-color: rgba(148,163,184,0.4); color: #94a3b8; }
+  .status-select.s-lunch { border-color: rgba(251,146,60,0.5); color: #fb923c; }
+  .status-select.s-off { border-color: rgba(239,68,68,0.4); color: #f87171; }
+  .status-select.s-other { border-color: rgba(148,163,184,0.4); color: #cbd5e1; }
+
+  .other-input {
+    background: var(--primary);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    width: 130px;
+    margin-top: 4px;
+    transition: border-color 0.3s;
+  }
+
+  .other-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
   .last-call-time {
     font-family: 'JetBrains Mono', monospace;
     font-size: 15px;
@@ -997,6 +1052,7 @@
         <tr>
           <th style="width:40px"></th>
           <th style="text-align:left">Agent Name</th>
+          <th>Activity</th>
           <th>Office Setups</th>
           <th>Field Visits</th>
           <th>Hrs Used</th>
@@ -1108,6 +1164,7 @@ function syncToFirebase() {
     id: a.id, name: a.name, office: a.office, field: a.field,
     actual: a.actual, target: a.target || 0,
     lastCall: a.lastCall || '',
+    activity: a.activity || 'Available', activityNote: a.activityNote || '',
     _unlocked: a._unlocked || {}
   }));
   agentsRef.set(cleanAgents);
@@ -1219,7 +1276,7 @@ function carryForwardAgents() {
     if (remaining <= 0) {
       // No previous data found — start with 5 empty slots
       for (let i = 0; i < 5; i++) {
-        agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', _unlocked: {} });
+        agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', activity: 'Available', activityNote: '', _unlocked: {} });
       }
       syncToFirebase();
       syncConfigToFirebase();
@@ -1236,7 +1293,7 @@ function carryForwardAgents() {
       if (prevData) {
         // Found previous day — carry names, reset stats
         agents = prevData.map(a => ({
-          id: a.id, name: a.name || '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', _unlocked: {}
+          id: a.id, name: a.name || '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', activity: 'Available', activityNote: '', _unlocked: {}
         }));
         nextId = Math.max(...agents.map(a => a.id)) + 1;
         syncToFirebase();
@@ -1278,6 +1335,14 @@ function renderTable() {
     tr.innerHTML = `
       <td><button class="remove-btn" onclick="removeAgent(${agent.id})" title="Remove">✕</button></td>
       <td><input class="agent-name-input" value="${agent.name}" placeholder="Enter name..." onchange="updateAgent(${agent.id},'name',this.value)"></td>
+      <td>
+        <select class="status-select ${getStatusClass(agent.activity || 'Available')}" onchange="changeActivity(${agent.id},this.value)">
+          ${['Available','Office Setup','Field Setup','Shipping','Meeting Call','Break','Lunch','Off','Other'].map(s =>
+            `<option value="${s}" ${(agent.activity || 'Available') === s ? 'selected' : ''}>${s}</option>`
+          ).join('')}
+        </select>
+        ${(agent.activity === 'Other') ? `<input class="other-input" placeholder="Type status..." value="${agent.activityNote || ''}" onchange="updateAgent(${agent.id},'activityNote',this.value)">` : ''}
+      </td>
       <td><input class="num-input setup-input" type="number" min="0" max="10" value="${agent.office}" onchange="updateAgent(${agent.id},'office',+this.value)"></td>
       <td><input class="num-input setup-input" type="number" min="0" max="10" value="${agent.field}" onchange="updateAgent(${agent.id},'field',+this.value)"></td>
       <td><span class="computed" style="color:var(--accent2)">${c.usedHours.toFixed(1)}</span></td>
@@ -1351,6 +1416,25 @@ function updateAgent(id, field, value) {
   syncToFirebase();
 }
 
+// ── Activity Status ──
+function getStatusClass(activity) {
+  const map = {
+    'Available': 's-available', 'Office Setup': 's-office', 'Field Setup': 's-field',
+    'Shipping': 's-shipping', 'Meeting Call': 's-meeting', 'Break': 's-break',
+    'Lunch': 's-lunch', 'Off': 's-off', 'Other': 's-other'
+  };
+  return map[activity] || '';
+}
+
+function changeActivity(id, value) {
+  const agent = agents.find(a => a.id === id);
+  if (!agent) return;
+  agent.activity = value;
+  if (value !== 'Other') agent.activityNote = '';
+  renderTable();
+  syncToFirebase();
+}
+
 // ── Tally Button ──
 function tallyCall(btnEl, id) {
   const agent = agents.find(a => a.id === id);
@@ -1385,7 +1469,7 @@ function tallyMinus(id) {
 
 // ── Add/Remove Agent ──
 function addAgent() {
-  agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', _unlocked: {} });
+  agents.push({ id: nextId++, name: '', office: 0, field: 0, actual: 0, target: 0, lastCall: '', activity: 'Available', activityNote: '', _unlocked: {} });
   renderTable();
   syncToFirebase();
   setTimeout(() => {
@@ -1511,7 +1595,7 @@ function saveData() {
 // ── Reset Day ──
 function resetDay() {
   if (!confirm('Reset all call counts for today? Agent names are kept.')) return;
-  agents.forEach(a => { a.actual = 0; a.office = 0; a.field = 0; a.lastCall = ''; a._unlocked = {}; });
+  agents.forEach(a => { a.actual = 0; a.office = 0; a.field = 0; a.lastCall = ''; a.activity = 'Available'; a.activityNote = ''; a._unlocked = {}; });
   renderTable();
   syncToFirebase();
   showToast('↻ Day reset — fresh start!');
